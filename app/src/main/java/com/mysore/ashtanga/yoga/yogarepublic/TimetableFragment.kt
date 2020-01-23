@@ -67,12 +67,12 @@ class TimetableFragment : Fragment() {
         // add your fragments
         // add your fragments
         adapter.addFrag(MondayFragment(), "Poniedziałek")
-        adapter.addFrag(MondayFragment(), "Wtorek")
-        adapter.addFrag(MondayFragment(), "Środa")
-        adapter.addFrag(MondayFragment(), "Czwartek")
-        adapter.addFrag(MondayFragment(), "Piątek")
-        adapter.addFrag(MondayFragment(), "Sobota")
-        adapter.addFrag(MondayFragment(), "Niedziela")
+        adapter.addFrag(TuesdayFragment(), "Wtorek")
+        adapter.addFrag(WednesdayFragment(), "Środa")
+        adapter.addFrag(ThursdayFragment(), "Czwartek")
+        adapter.addFrag(FridayFragment(), "Piątek")
+        adapter.addFrag(SaturdayFragment(), "Sobota")
+        adapter.addFrag(SundayFragment(), "Niedziela")
 
         // set adapter on viewpager
         // set adapter on viewpager

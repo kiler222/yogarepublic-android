@@ -28,14 +28,14 @@ private const val ARG_PARAM2 = "param2"
  * Use the [MondayFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MondayFragment : Fragment() {
+class SaturdayFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
     private var mNow: Long = 0
     private val mLongHeaders: List<String> = Arrays.asList("Sala I", "Sala II")
-    private val TAG = "PJ Monday Fragment"
+    private val TAG = "PJ Sat Fragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,50 +85,63 @@ class MondayFragment : Fragment() {
         Log.e(TAG, date.toString())
 
 
-        var td1 = TimeData(0, "7:00 - 8:30\nAshtanga III\nPrzemek",
-            R.color.ashtanga3color, R.color.white, start.plusMinutes(7*60).millis,
-            start.plusHours(8).plusMinutes(30).millis)
+        var td1 = TimeData(0, "8:30 - 10:00\nAshtanga III\nPrzemek",
+            R.color.ashtanga3color, R.color.white, start.plusMinutes(8*60+30).millis,
+            start.plusHours(10).plusMinutes(0).millis)
         values.add(td1)
 
 
+        var td11 = TimeData(0, "9:45 - 10:15\nMysore - Intro",
+            R.color.mysorecolor, R.color.white, start.plusMinutes(9*60+45).millis,
+            start.plusHours(10).plusMinutes(15).millis)
+        values.add(td11)
 
+        var td111 = TimeData(0, "11:00 - 12:15\nSzczęśliwy kręgosłup\nWojtek",
+            R.color.kregoslupcolor, R.color.white, start.plusMinutes(11*60).millis,
+            start.plusHours(12).plusMinutes(15).millis)
+        values.add(td111)
 
-        val td2 = TimeData(0, "16:30 - 17:30\nRegeneracja - Marta",
-            R.color.regeneracjacolor, R.color.white, start.plusMinutes(16*60+30).millis,
-            start.plusMinutes(17*60+30).millis)
-        values.add(td2)
-
-        val td3 = TimeData(0, "17:30 - 18:45\nAshtanga I\nMarek",
-            R.color.ashtanga1color, R.color.white, start.plusMinutes(17*60+30).millis,
-            start.plusMinutes(18*60+45).millis)
+        val td3 = TimeData(0, "12:30 - 13:45\nAshtanga I\nMagda",
+            R.color.ashtanga1color, R.color.white, start.plusMinutes(12*60+30).millis,
+            start.plusMinutes(13*60+45).millis)
         values.add(td3)
 
+        val td2 = TimeData(0, "14:00 - 15:15\nRegeneracja - Magda",
+            R.color.regeneracjacolor, R.color.white, start.plusMinutes(14*60).millis,
+            start.plusMinutes(15*60+15).millis)
+        values.add(td2)
 
-        val td4 = TimeData(0, "18:45 - 20:00\nPoczątkująca\nMałgosia",
-            R.color.poczatkujacacolor, R.color.white, start.plusMinutes(18*60+45).millis,
-            start.plusMinutes(20*60).millis)
-        values.add(td4)
 
-        val td5 = TimeData(0, "20:15 - 21:30\nKurs Jogi - Marta\n13.01 - 29.01",
-            R.color.kurscolor, R.color.white, start.plusMinutes(20*60+15).millis,
-            start.plusMinutes(21*60+30).millis)
+
+//
+//        val td4 = TimeData(0, "18:45 - 20:00\nPoczątkująca\nMałgosia",
+//            R.color.poczatkujacacolor, R.color.white, start.plusMinutes(18*60+45).millis,
+//            start.plusMinutes(20*60).millis)
+//        values.add(td4)
+
+        val td5 = TimeData(0, "15:30 - 16:45\nKurs Jogi - Magda\n13.01 - 29.01",
+            R.color.kurscolor, R.color.white, start.plusMinutes(15*60+30).millis,
+            start.plusMinutes(16*60+45).millis)
         values.add(td5)
 
         tables.add(TimeTableData(headers[0],values))
 
 
+
+
+
         val values2: ArrayList<TimeData<*>> = ArrayList()
 
-        val td21 = TimeData(0, "13:00 - 14:00\nLunch Time Yoga - Iza",
-            R.color.lunchcolor, R.color.white, start.plusHours(13).millis,
-            start.plusMinutes(14*60).millis)
+        val td21 = TimeData(0, "9:45 - 11:15\nMysore\nPrzemek",
+            R.color.mysorecolor, R.color.white, start.plusHours(8).plusMinutes(45).millis,
+            start.plusMinutes(11*60+15).millis)
         values2.add(td21)
 
 
 
-        val td22 = TimeData(0, "16:00 - 19:00\nMysore\nMonika\n\n\n\n18:00 Mysore Intro",
-            R.color.mysorecolor, R.color.white, start.plusMinutes(16*60).millis,
-            start.plusMinutes(19*60).millis)
+        val td22 = TimeData(0, "11:15 - 12:30\nYoga Course in English\n04.01 - 19.01 - Magda",
+            R.color.kurscolor, R.color.white, start.plusMinutes(11*60+15).millis,
+            start.plusMinutes(12*60+30).millis)
         values2.add(td22)
 
 //        val td23 = TimeData(0, "18:00\nMysore Intro",
@@ -137,9 +150,9 @@ class MondayFragment : Fragment() {
 //        values2.add(td23)
 
 
-        val td24 = TimeData(0, "19:15 - 20:30\nAshtanga II\nPrzemek",
-            R.color.ashtanga2color, R.color.white, start.plusMinutes(19*60+15).millis,
-            start.plusMinutes(20*60+30).millis)
+        val td24 = TimeData(0, "14:00 - 15:15\nKurs medytacji\n4,5 i 6.01 - Agnieszka",
+            R.color.medytacjacolor, R.color.white, start.plusMinutes(14*60).millis,
+            start.plusMinutes(15*60+15).millis)
         values2.add(td24)
 
 
