@@ -81,11 +81,9 @@ class SundayFragment : Fragment() {
         date: Long,
         headers: List<String>
     ): ArrayList<TimeTableData>? {
-        val colors_table = resources.obtainTypedArray(R.array.colors_table)
-        val colors_table_light =
-            resources.obtainTypedArray(R.array.colors_table_light)
+
         val tables: ArrayList<TimeTableData> = ArrayList()
-//        for (i in headers.indices) {
+
         val values: ArrayList<TimeData<*>> = ArrayList()
 
         //SALA 1 ---------------------

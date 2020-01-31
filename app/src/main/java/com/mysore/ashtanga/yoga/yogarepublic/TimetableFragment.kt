@@ -67,7 +67,8 @@ class TimetableFragment() : Fragment() {
         // add your fragments
 
         // add your fragments
-        adapter.addFrag(MondayFragment(), "Poniedziałek")
+
+        adapter.addFrag(MondayFragment(), getString(R.string.monday))
         adapter.addFrag(TuesdayFragment(), "Wtorek")
         adapter.addFrag(WednesdayFragment(), "Środa")
         adapter.addFrag(ThursdayFragment(), "Czwartek")

@@ -83,8 +83,9 @@ class MainActivity : AppCompatActivity() {
             .also { println(it) }
             .responseString { _, reponse, result ->
 
-                val (data, error) = result
 
+                val (data, error) = result
+                Log.e(TAG, "pobrany grafik - ${error}")
                 var obj = JSONObject(data)
 
                 val wynikArray = obj.getJSONArray("results")
@@ -112,6 +113,7 @@ class MainActivity : AppCompatActivity() {
 
                     val zajeciaTemp = wynikArray[z] as JSONObject
 
+
                     var arrayTemp = JSONArray()
 
                     val startD = zajeciaTemp.getString("startDate")
@@ -121,6 +123,8 @@ class MainActivity : AppCompatActivity() {
                     val duration = zajeciaTemp.get("duration")
                     val roomName = zajeciaTemp.get("roomName").toString()
                     val color = zajeciaTemp.get("backgroundColor").toString()
+                    val isReplacement = zajeciaTemp.get("isReplacement")
+                    val participantsLimit = zajeciaTemp.get("participantsLimit")
 //                    val x = color.split('#')[1].toInt()
 
 
@@ -174,6 +178,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         "Thursday" -> {
                             if (roomName == "Duża Sala" || roomName == "null") {
+
                                 oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
                                     "teacher" to nameIns, "roomName" to roomName, "color" to color )
                                 thuBig.add(oneClass)
@@ -187,6 +192,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         "Friday" -> {
                             if (roomName == "Duża Sala" || roomName == "null") {
+//                                Log.e(TAG, "zajecia: ${zajeciaTemp.toString()}")
                                 oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
                                     "teacher" to nameIns, "roomName" to roomName, "color" to color )
                                 friBig.add(oneClass)
@@ -269,33 +275,18 @@ class MainActivity : AppCompatActivity() {
                         SharedDate.sundaySmall = sunSmall
                         SharedDate.sundayBig = sunBig
 
-//                        tueBig.forEach {
-//                            Log.e(TAG, "bigforeach: ${it.toString()}")
-//                        }
-//
-//                        tueSmall.forEach {
-//                            Log.e(TAG, "Smallforeach: ${it.toString()}")
-//                        }
+                        monBig.forEach {
+                            Log.e(TAG, "bigforeach: ${it.toString()}")
+                        }
 
-//                        sortedMonSmall.forEach {
-//                            Log.e(TAG, "sorted monSmallforeach: ${it.toString()}")
-//                        }
+                        monSmall.forEach {
+                            Log.e(TAG, "Smallforeach: ${it.toString()}")
+                        }
+
                     }
 
                 }
 
-
-//
-
-
-
-//                val klasy = obj.get("results") as JSONObject
-//                Log.e(TAG, "ile rekordów w wynikArray:  ${wynikArray.length()}")
-//                Log.e(TAG, "Zajecia:  ${zajecia.getString("name")}")
-//                Log.e(TAG, "Zajecia start:  ${zajecia.getString("startDate")}")
-//                Log.e(TAG, "Zajecia end:  ${zajecia.getString("endDate")}")
-//                Log.e(TAG, "Zajecia trwaja:  ${zajecia.getString("duration")} minut")
-//                Log.e(TAG, "Zajecia prowadzi:  ${zajecia.getString("instructorName")}")
 
 
 
