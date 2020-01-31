@@ -13,6 +13,7 @@ import com.github.eunsiljo.timetablelib.data.TimeTableData
 import com.github.eunsiljo.timetablelib.view.TimeTableView
 import kotlinx.android.synthetic.main.fragment_monday.*
 import org.joda.time.DateTime
+import java.text.SimpleDateFormat
 import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -34,7 +35,7 @@ class TuesdayFragment: Fragment() {
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
     private var mNow: Long = 0
-    private val mLongHeaders: List<String> = Arrays.asList("Sala I", "Sala II")
+    private val mLongHeaders: List<String> = Arrays.asList("Mała Sala", "Duża Sala")
     private val TAG = "PJ Tuesday Fragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,8 +62,13 @@ class TuesdayFragment: Fragment() {
 
         timeTable!!.setShowHeader(true)
         timeTable!!.setTableMode(TimeTableView.TableMode.SHORT)
-        val now = DateTime.now()
-        mNow = now.withTimeAtStartOfDay().millis
+        val begining = SharedDate.tuesdayBig[0].getValue("start") as Long
+        val date = Date(begining)
+        val format = SimpleDateFormat("yyyy.MM.dd")
+        val dateBegining = format.format(date)
+        val df = SimpleDateFormat("yyyy.MM.dd")
+        mNow = df.parse(dateBegining).time
+
 
         timeTable!!.setTimeTable(mNow, getTimetable(mNow, mLongHeaders))
 
@@ -80,66 +86,60 @@ class TuesdayFragment: Fragment() {
         val start = DateTime(date)
 
         //SALA 1 ---------------------
-        val td1 = TimeData(0, "9:30 - 10:30\nRegeneracja - Ola",
-            R.color.regeneracjacolor, R.color.white, start.plusMinutes(9*60+30).millis,
-            start.plusHours(10).plusMinutes(30).millis)
-        values.add(td1)
+        SharedDate.tuesdaySmall.forEach {
 
-        val td2 = TimeData(0, "11:00 - 12:15\nJoga w Ciąży\nOla",
-            R.color.ciazacolor, R.color.white, start.plusMinutes(11*60).millis,
-            start.plusMinutes(12*60+15).millis)
-        values.add(td2)
+            val col = selectColor(it.getValue("name").toString())
 
-        val td3 = TimeData(0, "16:30 - 17:45\nAshtanga I\nGabrysia",
-            R.color.ashtanga1color, R.color.white, start.plusMinutes(16*60+30).millis,
-            start.plusMinutes(17*60+45).millis)
-        values.add(td3)
+            val st = Date(it.getValue("start") as Long)
+            val startTime = SimpleDateFormat("HH:mm").format(st)
+            val et = Date(it.getValue("end") as Long)
+            val endTime = SimpleDateFormat("HH:mm").format(et)
 
 
-        val td4 = TimeData(0, "17:45 - 19:00\nPoczątkująca\nMonika",
-            R.color.poczatkujacacolor, R.color.white, start.plusMinutes(17*60+45).millis,
-            start.plusMinutes(19*60).millis)
-        values.add(td4)
+            var td1 = TimeData(0, "$startTime - $endTime\n${it.getValue("name")} - ${it.getValue("teacher")}",
+                col, R.color.white, it.getValue("start") as Long,
+                it.getValue("end") as Long)
+            values.add(td1)
 
-        val td5 = TimeData(0, "19:00 - 20:15\nAshtanga I\nAgnieszka",
-            R.color.ashtanga1color, R.color.white, start.plusMinutes(19*60).millis,
-            start.plusMinutes(20*60+15).millis)
-        values.add(td5)
+        }
 
         tables.add(TimeTableData(headers[0],values))
+
 
 
         //SALA 2 ---------------------
 
         val values2: ArrayList<TimeData<*>> = ArrayList()
 
-        val td21 = TimeData(0, "6:15 - 10:00\nMysore\nAgnieszka",
-            R.color.mysorecolor, R.color.white, start.plusHours(6).plusMinutes(15).millis,
-            start.plusMinutes(10*60).millis)
-        values2.add(td21)
 
 
 
-        val td22 = TimeData(0, "16:00 - 19:00\nMysore\nPrzemek",
-            R.color.mysorecolor, R.color.white, start.plusMinutes(16*60).millis,
-            start.plusMinutes(19*60).millis)
-        values2.add(td22)
 
-//        val td23 = TimeData(0, "18:00\nMysore Intro",
-//            R.color.mysorecolor, R.color.white, start.plusMinutes(18*60).millis,
-//            start.plusMinutes(19*60).millis)
-//        values2.add(td23)
+        SharedDate.tuesdayBig.forEach {
 
 
-        val td24 = TimeData(0, "19:45 - 21:00\nSzczęśliwy kręgosłup\nWojtek",
-            R.color.kregoslupcolor, R.color.white, start.plusMinutes(19*60+45).millis,
-            start.plusMinutes(21*60).millis)
-        values2.add(td24)
+            val col = selectColor(it.getValue("name").toString())
 
+            val st = Date(it.getValue("start") as Long)
+            val startTime = SimpleDateFormat("HH:mm").format(st)
+            val et = Date(it.getValue("end") as Long)
+            val endTime = SimpleDateFormat("HH:mm").format(et)
+
+
+            var td1 = TimeData(0, "$startTime - $endTime\n${it.getValue("name")} - ${it.getValue("teacher")}",
+                col, R.color.white, it.getValue("start") as Long,
+                it.getValue("end") as Long)
+            values2.add(td1)
+
+        }
 
 
 
         tables.add(TimeTableData(headers[1],values2))
+
+
+
+
 
 
 

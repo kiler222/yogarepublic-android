@@ -24,7 +24,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [TimetableFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class TimetableFragment : Fragment() {
+class TimetableFragment() : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -65,6 +65,7 @@ class TimetableFragment : Fragment() {
         val adapter = TimetableAdapter(childFragmentManager)
 
         // add your fragments
+
         // add your fragments
         adapter.addFrag(MondayFragment(), "Poniedziałek")
         adapter.addFrag(TuesdayFragment(), "Wtorek")

@@ -1,19 +1,24 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
-import android.content.Context
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.github.eunsiljo.timetablelib.data.TimeData
 import com.github.eunsiljo.timetablelib.data.TimeTableData
 import com.github.eunsiljo.timetablelib.view.TimeTableView
+import com.github.kittinunf.fuel.Fuel
 import kotlinx.android.synthetic.main.fragment_monday.*
 import org.joda.time.DateTime
+import org.json.JSONObject
+
+import java.text.SimpleDateFormat
 import java.util.*
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,7 +39,7 @@ class MondayFragment : Fragment() {
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
     private var mNow: Long = 0
-    private val mLongHeaders: List<String> = Arrays.asList("Sala I", "Sala II")
+    private val mLongHeaders: List<String> = Arrays.asList("Mała Sala", "Duża Sala")
     private val TAG = "PJ Monday Fragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,10 +66,56 @@ class MondayFragment : Fragment() {
 
         timeTable!!.setShowHeader(true)
         timeTable!!.setTableMode(TimeTableView.TableMode.SHORT)
-        val now = DateTime.now()
-        mNow = now.withTimeAtStartOfDay().millis
+        val begining = SharedDate.mondayBig[0].getValue("start") as Long
+        val date = Date(begining)
+        val format = SimpleDateFormat("yyyy.MM.dd")
+        val dateBegining = format.format(date)
+        val df = SimpleDateFormat("yyyy.MM.dd")
+        mNow = df.parse(dateBegining).time
+
+
+//        val pattern = "yyyy-MM-dd"
+//        val simpleDateFormat = SimpleDateFormat(pattern)
+//        val startDate: String = simpleDateFormat.format(Date())
+//
+//        Log.e(TAG, "data: $startDate")
+
+
+//        Fuel.get("https://api-frontend2.efitness.com.pl/api/clubs/324/schedules/classes?dateFrom=2020-01-27T00:00:00&dateTo=2020-01-27T23:59:00")
+//            .header("Accept" to "application/json")
+//            .header("api-access-token" to "bih/AiXX0k2mqZGz44y+Ag==")
+////            .header("member-token" to "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMTYxNTI2Iiwic3ViIjoicGpvYmtpZXdpY3pAZ21haWwuY29tIiwianRpIjoiNTlhMWEyNGYtZTA0OS00ZmUwLWJkZWEtNDdhMjZkNjVmNjZkIiwiaWF0IjoxNTgwMzMwNjkxLCJpZCI6IjExNjE1MjYiLCJuYmYiOjE1ODAzMzA2OTAsImV4cCI6MTU4MDMzNzg5MCwiaXNzIjoiYXBpRnJvbnRlbmQiLCJhdWQiOiJodHRwczovL2FwaS1mcm9udGVuZDIuZWZpdG5lc3MuY29tLnBsIn0.mwEwqQBlIaYp57313VsvsBWYrmDVuBwhuiN1ZjoVfdmcsgXBk8IgtNm_pu2KL1j7DOXeyIZYIbvTHwoXUqb5Xcwk5blVg3LgP6hPtE2CiCTqeQu3AxkISUCDYXvdkhQGEoG_hVg-gJ3yTGdJFZdQ0i2hE_sGI2W97-PHNl8oqWgOn13QYN7OWGQ0rlICr0MJIlpoxjD0Cw97O2h1kV32f1KPSP-uhlEYNTZQEQ-79c-GAxBWeTYwSqYWx4PqFxbH5sodCpWghvAWeyqrxvFdDADPdNNPQpkYXHI2AOeFSFATBVQ3VZ0z__3bBZtWx_W7SC22mSZOS-jwzA6kbX4G8w")
+//            .also { println(it) }
+//            .responseString { _, reponse, result ->
+//
+//                val (data, error) = result
+//
+//                var obj = JSONObject(data)
+//
+//                val wynikArray = obj.getJSONArray("results")
+//
+//                val zajecia = wynikArray[0] as JSONObject
+//
+////                val klasy = obj.get("results") as JSONObject
+//                Log.e(TAG, "wynik  ${wynikArray[0].toString()}")
+//                Log.e(TAG, "Zajecia:  ${zajecia.getString("name")}")
+//                Log.e(TAG, "Zajecia start:  ${zajecia.getString("startDate")}")
+//                Log.e(TAG, "Zajecia end:  ${zajecia.getString("endDate")}")
+//                Log.e(TAG, "Zajecia trwaja:  ${zajecia.getString("duration")} minut")
+//                Log.e(TAG, "Zajecia prowadzi:  ${zajecia.getString("instructorName")}")
+//
+//                val startD = zajecia.getString("startDate") as Date
+//                val endD = zajecia.getString("endDate") as Date
+//                val name = zajecia.getString("name")
+//                val nameIns = zajecia.getString("instructorName")
+//
+//
+//            }
+
+
 
         timeTable!!.setTimeTable(mNow, getTimetable(mNow, mLongHeaders))
+
 
 
     }
@@ -74,74 +125,64 @@ class MondayFragment : Fragment() {
     private fun getTimetable(
         date: Long,
         headers: List<String>
+
     ): ArrayList<TimeTableData>? {
-        val colors_table = resources.obtainTypedArray(R.array.colors_table)
-        val colors_table_light =
-            resources.obtainTypedArray(R.array.colors_table_light)
         val tables: ArrayList<TimeTableData> = ArrayList()
 //        for (i in headers.indices) {
         val values: ArrayList<TimeData<*>> = ArrayList()
         var start = DateTime(date)
+
+        Log.e(TAG, "wyglad daty w fragment: $start")
+
         Log.e(TAG, date.toString())
 
 
-        var td1 = TimeData(0, "7:00 - 8:30\nAshtanga III\nPrzemek",
-            R.color.ashtanga3color, R.color.white, start.plusMinutes(7*60).millis,
-            start.plusHours(8).plusMinutes(30).millis)
+        SharedDate.mondaySmall.forEach {
+
+            val col = selectColor(it.getValue("name").toString())
+
+
+            val st = Date(it.getValue("start") as Long)
+            val startTime = SimpleDateFormat("HH:mm").format(st)
+            val et = Date(it.getValue("end") as Long)
+            val endTime = SimpleDateFormat("HH:mm").format(et)
+
+
+            var td1 = TimeData(0, "$startTime - $endTime\n${it.getValue("name")} - ${it.getValue("teacher")}",
+            col, R.color.white, it.getValue("start") as Long,
+                it.getValue("end") as Long)
         values.add(td1)
 
-
-
-
-        val td2 = TimeData(0, "16:30 - 17:30\nRegeneracja - Marta",
-            R.color.regeneracjacolor, R.color.white, start.plusMinutes(16*60+30).millis,
-            start.plusMinutes(17*60+30).millis)
-        values.add(td2)
-
-        val td3 = TimeData(0, "17:30 - 18:45\nAshtanga I\nMarek",
-            R.color.ashtanga1color, R.color.white, start.plusMinutes(17*60+30).millis,
-            start.plusMinutes(18*60+45).millis)
-        values.add(td3)
-
-
-        val td4 = TimeData(0, "18:45 - 20:00\nPoczątkująca\nMałgosia",
-            R.color.poczatkujacacolor, R.color.white, start.plusMinutes(18*60+45).millis,
-            start.plusMinutes(20*60).millis)
-        values.add(td4)
-
-        val td5 = TimeData(0, "20:15 - 21:30\nKurs Jogi - Marta\n13.01 - 29.01",
-            R.color.kurscolor, R.color.white, start.plusMinutes(20*60+15).millis,
-            start.plusMinutes(21*60+30).millis)
-        values.add(td5)
+        }
 
         tables.add(TimeTableData(headers[0],values))
 
 
+
+
         val values2: ArrayList<TimeData<*>> = ArrayList()
 
-        val td21 = TimeData(0, "13:00 - 14:00\nLunch Time Yoga - Iza",
-            R.color.lunchcolor, R.color.white, start.plusHours(13).millis,
-            start.plusMinutes(14*60).millis)
-        values2.add(td21)
 
 
 
-        val td22 = TimeData(0, "16:00 - 19:00\nMysore\nMonika\n\n\n\n18:00 Mysore Intro",
-            R.color.mysorecolor, R.color.white, start.plusMinutes(16*60).millis,
-            start.plusMinutes(19*60).millis)
-        values2.add(td22)
 
-//        val td23 = TimeData(0, "18:00\nMysore Intro",
-//            R.color.mysorecolor, R.color.white, start.plusMinutes(18*60).millis,
-//            start.plusMinutes(19*60).millis)
-//        values2.add(td23)
+        SharedDate.mondayBig.forEach {
 
 
-        val td24 = TimeData(0, "19:15 - 20:30\nAshtanga II\nPrzemek",
-            R.color.ashtanga2color, R.color.white, start.plusMinutes(19*60+15).millis,
-            start.plusMinutes(20*60+30).millis)
-        values2.add(td24)
+            val col = selectColor(it.getValue("name").toString())
 
+            val st = Date(it.getValue("start") as Long)
+            val startTime = SimpleDateFormat("HH:mm").format(st)
+            val et = Date(it.getValue("end") as Long)
+            val endTime = SimpleDateFormat("HH:mm").format(et)
+
+
+            var td1 = TimeData(0, "$startTime - $endTime\n${it.getValue("name")} - ${it.getValue("teacher")}",
+                col, R.color.white, it.getValue("start") as Long,
+                it.getValue("end") as Long)
+            values2.add(td1)
+
+        }
 
 
 
