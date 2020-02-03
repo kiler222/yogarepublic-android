@@ -39,7 +39,7 @@ class MondayFragment : Fragment() {
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
     private var mNow: Long = 0
-    private val mLongHeaders: List<String> = Arrays.asList("Mała Sala", "Duża Sala")
+    private val mLongHeaders = SharedDate.mLongerHeaders
     private val TAG = "PJ Monday Fragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +48,9 @@ class MondayFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+        Log.e(TAG, mLongHeaders.toString())
+
     }
 
     override fun onCreateView(

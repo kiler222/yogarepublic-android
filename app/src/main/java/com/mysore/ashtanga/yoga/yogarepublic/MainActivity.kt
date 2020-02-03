@@ -1,13 +1,21 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
+import android.provider.Settings
+import android.provider.Settings.Global.getString
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.github.kittinunf.fuel.Fuel
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_main.*
 import org.joda.time.DateTime
@@ -33,12 +41,19 @@ object SharedDate{
     var saturdaySmall = ArrayList<Map<String, Any>>()
     var sundayBig = ArrayList<Map<String, Any>>()
     var sundaySmall = ArrayList<Map<String, Any>>()
+    var mLongerHeaders = ArrayList<String>()
+    var clubCardNumber = String
+    val db = FirebaseFirestore.getInstance()
+
 
 }
+
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+
 
     val TAG = "PJ MainActivity"
 
@@ -51,247 +66,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-
-
-        val now = DateTime.now()
-        val mNowLong = now.withTimeAtStartOfDay().millis
-        val mNowplus7Long = now.withTimeAtStartOfDay().plusDays(7).minusSeconds(1).millis
-
-        val mNowHuman = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(mNowLong)
-        val mNowplus7Human = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(mNowplus7Long)
-
-        Log.e(TAG, "dzisiaj: $mNowLong i za 7 dni: $mNowplus7Long")
-        Log.e(TAG, "dzisiaj: $mNowHuman i za 7 dni: $mNowplus7Human")
-
-        val dOwInt = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-        val dOwName = SimpleDateFormat("EEEE").format(now.millis)
+        SharedDate.mLongerHeaders.add(getString(R.string.small_room))
+        SharedDate.mLongerHeaders.add(getString(R.string.big_room))
 
 
 
 
-        val pattern = "yyyy-MM-dd"
-        val simpleDateFormat = SimpleDateFormat(pattern)
-        val startDate: String = simpleDateFormat.format(Date())
-
-        Log.e(TAG, "data: $startDate")
-
-
-        Fuel.get("https://api-frontend2.efitness.com.pl/api/clubs/324/schedules/classes?dateFrom=${mNowHuman}&dateTo=${mNowplus7Human}")
-            .header("Accept" to "application/json")
-            .header("api-access-token" to "bih/AiXX0k2mqZGz44y+Ag==")
-//            .header("member-token" to "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMTYxNTI2Iiwic3ViIjoicGpvYmtpZXdpY3pAZ21haWwuY29tIiwianRpIjoiNTlhMWEyNGYtZTA0OS00ZmUwLWJkZWEtNDdhMjZkNjVmNjZkIiwiaWF0IjoxNTgwMzMwNjkxLCJpZCI6IjExNjE1MjYiLCJuYmYiOjE1ODAzMzA2OTAsImV4cCI6MTU4MDMzNzg5MCwiaXNzIjoiYXBpRnJvbnRlbmQiLCJhdWQiOiJodHRwczovL2FwaS1mcm9udGVuZDIuZWZpdG5lc3MuY29tLnBsIn0.mwEwqQBlIaYp57313VsvsBWYrmDVuBwhuiN1ZjoVfdmcsgXBk8IgtNm_pu2KL1j7DOXeyIZYIbvTHwoXUqb5Xcwk5blVg3LgP6hPtE2CiCTqeQu3AxkISUCDYXvdkhQGEoG_hVg-gJ3yTGdJFZdQ0i2hE_sGI2W97-PHNl8oqWgOn13QYN7OWGQ0rlICr0MJIlpoxjD0Cw97O2h1kV32f1KPSP-uhlEYNTZQEQ-79c-GAxBWeTYwSqYWx4PqFxbH5sodCpWghvAWeyqrxvFdDADPdNNPQpkYXHI2AOeFSFATBVQ3VZ0z__3bBZtWx_W7SC22mSZOS-jwzA6kbX4G8w")
-            .also { println(it) }
-            .responseString { _, reponse, result ->
-
-
-                val (data, error) = result
-                Log.e(TAG, "pobrany grafik - ${error}")
-                var obj = JSONObject(data)
-
-                val wynikArray = obj.getJSONArray("results")
-
-                val ileZajec = wynikArray.length()
-
-
-                var monBig = ArrayList<Map<String, Any>>()
-                var monSmall = ArrayList<Map<String, Any>>()
-                var tueBig = ArrayList<Map<String, Any>>()
-                var tueSmall = ArrayList<Map<String, Any>>()
-                var wedBig = ArrayList<Map<String, Any>>()
-                var wedSmall = ArrayList<Map<String, Any>>()
-                var thuBig = ArrayList<Map<String, Any>>()
-                var thuSmall = ArrayList<Map<String, Any>>()
-                var friBig = ArrayList<Map<String, Any>>()
-                var friSmall = ArrayList<Map<String, Any>>()
-                var satBig = ArrayList<Map<String, Any>>()
-                var satSmall = ArrayList<Map<String, Any>>()
-                var sunBig = ArrayList<Map<String, Any>>()
-                var sunSmall = ArrayList<Map<String, Any>>()
-
-//                val obj = JSONObject()
-                for (z in 0..ileZajec-1){
-
-                    val zajeciaTemp = wynikArray[z] as JSONObject
-
-
-                    var arrayTemp = JSONArray()
-
-                    val startD = zajeciaTemp.getString("startDate")
-                    val endD = zajeciaTemp.getString("endDate")
-                    val name = zajeciaTemp.getString("name")
-                    val nameIns = zajeciaTemp.getString("instructorName")
-                    val duration = zajeciaTemp.get("duration")
-                    val roomName = zajeciaTemp.get("roomName").toString()
-                    val color = zajeciaTemp.get("backgroundColor").toString()
-                    val isReplacement = zajeciaTemp.get("isReplacement")
-                    val participantsLimit = zajeciaTemp.get("participantsLimit")
-//                    val x = color.split('#')[1].toInt()
-
-
-                    val startDataLong = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(startD).getTime()
-                    val endDatalong = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(endD).getTime()
-                    val dayName = SimpleDateFormat("EEEE", Locale.US).format(startDataLong)
-
-                    var oneClass = mapOf<String, Any>()
-
-
-
-                    when (dayName) {
-                        "Monday" -> {
-                            if (roomName == "Duża Sala" || roomName == "null") {
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                monBig.add(oneClass)
-                            } else {
-
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                monSmall.add(oneClass)
-
-                            }
-                        }
-                        "Tuesday" -> {
-                            if (roomName == "Duża Sala" || roomName == "null") {
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                tueBig.add(oneClass)
-                            } else {
-
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                tueSmall.add(oneClass)
-
-                            }
-                        }
-                        "Wednesday" -> {
-                            if (roomName == "Duża Sala" || roomName == "null") {
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                wedBig.add(oneClass)
-                            } else {
-
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                wedSmall.add(oneClass)
-
-                            }
-                        }
-                        "Thursday" -> {
-                            if (roomName == "Duża Sala" || roomName == "null") {
-
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                thuBig.add(oneClass)
-                            } else {
-
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                thuSmall.add(oneClass)
-
-                            }
-                        }
-                        "Friday" -> {
-                            if (roomName == "Duża Sala" || roomName == "null") {
-//                                Log.e(TAG, "zajecia: ${zajeciaTemp.toString()}")
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                friBig.add(oneClass)
-                            } else {
-
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                friSmall.add(oneClass)
-
-                            }
-                        }
-                        "Saturday" -> {
-                            if (roomName == "Duża Sala" || roomName == "null") {
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                satBig.add(oneClass)
-                            } else {
-
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                satSmall.add(oneClass)
-
-                            }
-                        }
-                        "Sunday" -> {
-                            if (roomName == "Duża Sala" || roomName == "null") {
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                sunBig.add(oneClass)
-                            } else {
-
-                                oneClass = mapOf("start" to startDataLong, "end" to endDatalong, "name" to name,
-                                    "teacher" to nameIns, "roomName" to roomName, "color" to color )
-                                sunSmall.add(oneClass)
-
-                            }
-                        }
-                        else -> { // Note the block
-//                            Log.e(TAG, "else dayname: $dayName")
-                        }
-
-
-
-                    }
-
-//                    val sortedMonSmall =
-
-
-
-                    if (z == ileZajec-1) {
-
-                        monBig.sortWith(compareBy({it.get("start").toString()}))
-                        monSmall.sortWith(compareBy({it.get("start").toString()}))
-                        tueBig.sortWith(compareBy({it.get("start").toString()}))
-                        tueSmall.sortWith(compareBy({it.get("start").toString()}))
-                        wedBig.sortWith(compareBy({it.get("start").toString()}))
-                        wedSmall.sortWith(compareBy({it.get("start").toString()}))
-                        thuBig.sortWith(compareBy({it.get("start").toString()}))
-                        thuSmall.sortWith(compareBy({it.get("start").toString()}))
-                        friBig.sortWith(compareBy({it.get("start").toString()}))
-                        friSmall.sortWith(compareBy({it.get("start").toString()}))
-                        satBig.sortWith(compareBy({it.get("start").toString()}))
-                        satSmall.sortWith(compareBy({it.get("start").toString()}))
-                        sunBig.sortWith(compareBy({it.get("start").toString()}))
-                        sunSmall.sortWith(compareBy({it.get("start").toString()}))
-
-
-                        SharedDate.mondaySmall = monSmall
-                        SharedDate.mondayBig = monBig
-                        SharedDate.tuesdaySmall = tueSmall
-                        SharedDate.tuesdayBig = tueBig
-                        SharedDate.wednesdaySmall = wedSmall
-                        SharedDate.wednesdayBig = wedBig
-                        SharedDate.thursdaySmall = thuSmall
-                        SharedDate.thursdayBig = thuBig
-                        SharedDate.fridaySmall = friSmall
-                        SharedDate.fridayBig = friBig
-                        SharedDate.saturdaySmall = satSmall
-                        SharedDate.saturdayBig = satBig
-                        SharedDate.sundaySmall = sunSmall
-                        SharedDate.sundayBig = sunBig
-
-                        monBig.forEach {
-                            Log.e(TAG, "bigforeach: ${it.toString()}")
-                        }
-
-                        monSmall.forEach {
-                            Log.e(TAG, "Smallforeach: ${it.toString()}")
-                        }
-
-                    }
-
-                }
-
-
-
-
-
-            }
 
 
 
@@ -303,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         bottom_app_bar.setOnNavigationItemSelectedListener { item: MenuItem ->
             return@setOnNavigationItemSelectedListener when (item.itemId) {
                 R.id.app_bar_card -> {
-//                    Toast.makeText(this, "Card item click", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Card item click", Toast.LENGTH_SHORT).show()
 //
                     val fragment = CardFragment()
                     supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment, fragment.javaClass.getSimpleName())
@@ -311,10 +91,23 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.app_bar_timetable -> {
-                    val fragment = TimetableFragment()
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment, fragment.javaClass.getSimpleName())
-                        .commit()
-                    true
+
+                    Toast.makeText(this, "Card item click", Toast.LENGTH_SHORT).show()
+
+                    if (SharedDate.mondayBig.isNullOrEmpty()){
+
+                        Toast.makeText(this, getString(R.string.loading_data), Toast.LENGTH_SHORT).show()
+                        false
+
+                    } else {
+                        val fragment = TimetableFragment()
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment, fragment, fragment.javaClass.getSimpleName())
+                            .commit()
+                        true
+                    }
+
+
                 }
 
                 else -> false
@@ -343,25 +136,7 @@ class MainActivity : AppCompatActivity() {
 
         signInAnonymously()
 
-//        val userID = 2754
-//        userNumber.text = userID.toString()
-//        val bitMatrix: BitMatrix
-//        try {
-//            bitMatrix = MultiFormatWriter().encode(
-//                userID.toString(),
-//                BarcodeFormat.ITF,
-//                300, 80, null
-//            )
-//
-//            val bEnc = BarcodeEncoder()
-//
-//            val bitmap = bEnc.createBitmap(bitMatrix)
-//
-//            barcodeImageView.setImageBitmap(bitmap)
-//
-//        } catch (Illegalargumentexception: IllegalArgumentException) {
-//            return
-//        }
+
 
 
         FirebaseInstanceId.getInstance().instanceId
@@ -395,6 +170,8 @@ class MainActivity : AppCompatActivity() {
 //                    Log.e(TAG, "signInAnonymously:success")
                     val user = auth.currentUser
 
+
+
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInAnonymously:failure", task.exception)
@@ -420,6 +197,20 @@ class MainActivity : AppCompatActivity() {
 
 
 
+}
+
+
+fun Fragment.hideKeyboard() {
+    view?.let { activity?.hideKeyboard(it) }
+}
+
+fun Activity.hideKeyboard() {
+    hideKeyboard(currentFocus ?: View(this))
+}
+
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
 

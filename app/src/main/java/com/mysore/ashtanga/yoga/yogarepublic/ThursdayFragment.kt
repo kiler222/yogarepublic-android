@@ -35,7 +35,7 @@ class ThursdayFragment: Fragment() {
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
     private var mNow: Long = 0
-    private val mLongHeaders: List<String> = Arrays.asList("Mała Sala", "Duża Sala")
+    private val mLongHeaders = SharedDate.mLongerHeaders//private val mLongHeaders: List<String> = Arrays.asList(getString(R.string.small_room), getString(R.string.big_room))
     private val TAG = "PJ Thursday Fragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {

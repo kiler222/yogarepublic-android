@@ -2,13 +2,18 @@ package com.mysore.ashtanga.yoga.yogarepublic
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.fragment_timetable.*
-
+import org.joda.time.DateTime
+//import sun.jvm.hotspot.utilities.IntArray
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.*
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -29,7 +34,7 @@ class TimetableFragment() : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
-
+    private val TAG = "PJ timetabelfrag"
 //    private lateinit var demoCollectionPagerAdapter: DemoCollectionPagerAdapter
     private lateinit var viewPager: ViewPager
 
@@ -69,17 +74,19 @@ class TimetableFragment() : Fragment() {
         // add your fragments
 
         adapter.addFrag(MondayFragment(), getString(R.string.monday))
-        adapter.addFrag(TuesdayFragment(), "Wtorek")
-        adapter.addFrag(WednesdayFragment(), "Środa")
-        adapter.addFrag(ThursdayFragment(), "Czwartek")
-        adapter.addFrag(FridayFragment(), "Piątek")
-        adapter.addFrag(SaturdayFragment(), "Sobota")
-        adapter.addFrag(SundayFragment(), "Niedziela")
+        adapter.addFrag(TuesdayFragment(), getString(R.string.tuesday))
+        adapter.addFrag(WednesdayFragment(), getString(R.string.wednesday))
+        adapter.addFrag(ThursdayFragment(), getString(R.string.thursday))
+        adapter.addFrag(FridayFragment(), getString(R.string.friday))
+        adapter.addFrag(SaturdayFragment(), getString(R.string.saturday))
+        adapter.addFrag(SundayFragment(), getString(R.string.sunday))
 
         // set adapter on viewpager
         // set adapter on viewpager
         viewPager.adapter = adapter
+        val dayOfWeekNumber = SimpleDateFormat("u", Locale.US).format(DateTime.now().millis).toInt()
 
+        viewPager.setCurrentItem(dayOfWeekNumber-1)
 
 
     }
