@@ -23,10 +23,9 @@
     <string name="logout_title">Do you want to log out?</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
-
-
-
-
+    <string name="no_membership">No valid membership</string>
+    <string name="timetable">Timetable</string>
+    <string name="my_card">My card</string>
 
 
 </resources>

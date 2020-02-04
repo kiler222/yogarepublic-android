@@ -1,22 +1,18 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
-import android.content.Context
+//import sun.jvm.hotspot.utilities.IntArray
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import com.google.common.reflect.TypeToken
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_timetable.*
 import org.joda.time.DateTime
-import java.lang.reflect.Type
-//import sun.jvm.hotspot.utilities.IntArray
+import org.joda.time.LocalDate
+
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 
 
@@ -91,7 +87,9 @@ class TimetableFragment() : Fragment() {
         // set adapter on viewpager
         // set adapter on viewpager
         viewPager.adapter = adapter
-        val dayOfWeekNumber = SimpleDateFormat("u", Locale.US).format(DateTime.now().millis).toInt()
+
+
+        val dayOfWeekNumber = LocalDate.now().dayOfWeek //SimpleDateFormat("u", Locale.US).format(DateTime.now().millis).toInt()
 
         viewPager.setCurrentItem(dayOfWeekNumber-1)
 

@@ -68,6 +68,7 @@ class CardFragment : Fragment() {
         SharedDate.isLogged = sharedPref!!.getBoolean("isLogged", false)
         SharedDate.userName = sharedPref.getString("userName", "") ?: ""
         SharedDate.cardNumber = sharedPref.getString("cardNumber", "") ?: ""
+        SharedDate.membershipName = sharedPref.getString("membershipName", "") ?: ""
 
 
         Log.e(TAG, "jaki jest shared.islogged: ${SharedDate.isLogged}, zalogowany jest: ${SharedDate.userName}, karta: ${SharedDate.cardNumber}")
@@ -77,11 +78,13 @@ class CardFragment : Fragment() {
             barcodeImageView.visibility = View.VISIBLE
             logoutButton.visibility = View.VISIBLE
             userName.text = SharedDate.userName
+            membershipNameField.text= SharedDate.membershipName
             cardNumber.text = SharedDate.cardNumber
             emailField.visibility = View.GONE
             passwordField.visibility = View.GONE
             button.visibility = View.GONE
             userName.visibility = View.VISIBLE
+//            membershipNameField.visibility = View.GONE //VISIBLE
 
             val bitMatrix: BitMatrix
             try {
@@ -113,7 +116,9 @@ class CardFragment : Fragment() {
             cardNumber.visibility = View.GONE
             barcodeImageView.visibility = View.GONE
             logoutButton.visibility = View.GONE
+//            membershipNameField.visibility = View.GONE
             userName.text = ""
+            membershipNameField.text = ""
             emailField.visibility = View.VISIBLE
             passwordField.visibility = View.VISIBLE
             button.visibility = View.VISIBLE
@@ -141,6 +146,7 @@ class CardFragment : Fragment() {
                 logoutButton.visibility = View.GONE
                 userName.visibility = View.GONE
                 userName.text = ""
+                membershipNameField.text = ""
                 emailField.setText("")
                 passwordField.setText("")
                 cardNumber.text = ""
@@ -148,6 +154,8 @@ class CardFragment : Fragment() {
                 SharedDate.cardNumber = ""
                 SharedDate.userName = ""
                 sharedPref.edit().remove("login").apply()
+                sharedPref.edit().remove("membershipName").apply()
+
                 sharedPref.edit().remove("cardNumber").apply()
                 sharedPref.edit().remove("userName").apply()
                 sharedPref.edit().putBoolean("isLogged", false).apply()
@@ -155,6 +163,7 @@ class CardFragment : Fragment() {
                 passwordField.visibility = View.VISIBLE
                 button.visibility = View.VISIBLE
                 logoutButton.visibility = View.GONE
+//                membershipNameField.visibility = View.GONE
 
             }
 
@@ -277,22 +286,21 @@ class CardFragment : Fragment() {
 
                     }
 
-                    getMembership(memberToken, getString(R.string.api_access_token)){
+                    getMembership(memberToken, getString(R.string.api_access_token), context!!){ membershipName, membershipValidTo ->
 
-                        Log.e(TAG, "get member: $it")
+                        Log.e(TAG, "membership: $membershipName, valid: $membershipValidTo")
+//                        membershipNameField.text = membershipName
+                        SharedDate.membershipName = membershipName
+                        sharedPref.edit().putString("membershipName", membershipName).apply()
 
                         getPersonalData(memberToken, getString(R.string.api_access_token)) {
 
-                            Log.e(TAG, "get personal: $it")
-
-
-
-                            Log.e(TAG, "zakonczone odpytanie efitnesu")
+                            Log.e(TAG, "username: $it")
                             sharedPref.edit().putString("userName", it).apply()
                             SharedDate.userName = it
-                            Log.e(TAG, "zakonczone odpytanie efitnesu: ${sharedPref!!.getString("userName", "asd")}")
 
                             activity?.runOnUiThread {
+
                                 button.visibility = View.GONE
                                 emailField.visibility = View.GONE
                                 passwordField.visibility = View.GONE
@@ -301,6 +309,7 @@ class CardFragment : Fragment() {
                                 logoutButton.visibility = View.VISIBLE
                                 barcodeImageView.visibility = View.VISIBLE
                                 cardNumber.visibility = View.VISIBLE
+//                                membershipNameField.visibility = View.GONE //VISIBLE
                                 progressBar.visibility = View.GONE
 
                             }

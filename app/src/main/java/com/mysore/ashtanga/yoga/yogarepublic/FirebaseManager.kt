@@ -15,7 +15,7 @@ fun getUserData(user: String, callback: (String) -> Unit) {
             if (document.data != null) {
 
 
-                Log.e(TAG, "DocumentSnapshot data: ${document.data}")
+//                Log.e(TAG, "DocumentSnapshot data: ${document.data}")
                 val cardNumber = document.data!!.get("cardNumber") as String
 
 

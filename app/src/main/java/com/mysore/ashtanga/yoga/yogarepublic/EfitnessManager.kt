@@ -1,17 +1,14 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
 
+import android.content.Context
+
 import android.util.Log
 
+
 import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.result.failure
-import com.github.kittinunf.result.success
-import org.json.JSONArray
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+
 
 fun login(loginName: String, password: String, token: String, callback: (String) -> Unit) {
 
@@ -38,11 +35,6 @@ fun login(loginName: String, password: String, token: String, callback: (String)
             val err = error.let { it?.localizedMessage } ?: "null"
 
 
-            if (err == "null") {
-                Log.e(TAG, "jest NULLL")
-            } else {
-                Log.e(TAG, "nie jest NULLL")
-            }
 
 
 
@@ -78,11 +70,11 @@ fun login(loginName: String, password: String, token: String, callback: (String)
 }
 
 
-fun getMembership(memberToken: String, token: String, callback: (String) -> Unit) {
+fun getMembership(memberToken: String, token: String, context: Context, callback: (String, String) -> Unit) {
 
     val TAG = "PJ getmembership"
 
-
+    var membershipName = ""
 
     Fuel.get("https://api-frontend2.efitness.com.pl/api/clubs/324/members/memberships")
         .header("Accept" to "application/json")
@@ -113,13 +105,27 @@ fun getMembership(memberToken: String, token: String, callback: (String) -> Unit
 
                 val memberShip = membershipArray[z] as JSONObject
 
-                val membershipName = memberShip.getString("name")
+                membershipName = memberShip.getString("name")
                 val membershipIsValid = memberShip.getBoolean("isValid")
                 val membershipValidTo = memberShip.get("to")
-                Log.e(TAG, "$membershipName i czy aktywne $membershipIsValid do $membershipValidTo")
+//                Log.e(TAG, "$membershipName i czy aktywne $membershipIsValid do $membershipValidTo")
+
+                if (membershipIsValid) {
+                    Log.e(TAG, "membership valid i zaraz callback")
+                    callback(membershipName, membershipValidTo.toString())
+                    break
+                }
+
+
+                if (z == ileMemberships-1) {
+                    callback(context.getString(R.string.no_membership), "")
+                    break
+                }
+
             }
 
-            callback("membership")
+
+
 
         }
 
@@ -132,15 +138,12 @@ fun getPersonalData(memberToken: String, token: String, callback: (String) -> Un
 
     val TAG = "PJ personalDat"
 
-
+Log.e(TAG, "zaraz odptuje get personal data")
 
     Fuel.get("https://api-frontend2.efitness.com.pl/api/clubs/324/members")
         .header("Accept" to "application/json")
-//        .header("Content-type" to "application/json")
         .header("api-access-token" to token)
         .header("member-token" to "bearer $memberToken")
-//        .body(json.toString())
-//            .header("member-token" to "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMTYxNTI2Iiwic3ViIjoicGpvYmtpZXdpY3pAZ21haWwuY29tIiwianRpIjoiNTlhMWEyNGYtZTA0OS00ZmUwLWJkZWEtNDdhMjZkNjVmNjZkIiwiaWF0IjoxNTgwMzMwNjkxLCJpZCI6IjExNjE1MjYiLCJuYmYiOjE1ODAzMzA2OTAsImV4cCI6MTU4MDMzNzg5MCwiaXNzIjoiYXBpRnJvbnRlbmQiLCJhdWQiOiJodHRwczovL2FwaS1mcm9udGVuZDIuZWZpdG5lc3MuY29tLnBsIn0.mwEwqQBlIaYp57313VsvsBWYrmDVuBwhuiN1ZjoVfdmcsgXBk8IgtNm_pu2KL1j7DOXeyIZYIbvTHwoXUqb5Xcwk5blVg3LgP6hPtE2CiCTqeQu3AxkISUCDYXvdkhQGEoG_hVg-gJ3yTGdJFZdQ0i2hE_sGI2W97-PHNl8oqWgOn13QYN7OWGQ0rlICr0MJIlpoxjD0Cw97O2h1kV32f1KPSP-uhlEYNTZQEQ-79c-GAxBWeTYwSqYWx4PqFxbH5sodCpWghvAWeyqrxvFdDADPdNNPQpkYXHI2AOeFSFATBVQ3VZ0z__3bBZtWx_W7SC22mSZOS-jwzA6kbX4G8w")
         .also { println(it) }
         .responseString { _, response, result ->
 

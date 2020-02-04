@@ -3,8 +3,6 @@ package com.mysore.ashtanga.yoga.yogarepublic
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.provider.Settings
-import android.provider.Settings.Global.getString
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -12,21 +10,16 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.github.kittinunf.fuel.Fuel
+
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
-import org.joda.time.DateTime
-import org.json.JSONArray
-import org.json.JSONObject
-import java.lang.reflect.Type
 
-import java.text.SimpleDateFormat
-import java.util.*
+import java.lang.reflect.Type
 import kotlin.collections.ArrayList
 
 object SharedDate{
@@ -51,6 +44,7 @@ object SharedDate{
     var isLogged = false
     var login = ""
     var userName = ""
+    var membershipName = ""
 
 }
 
@@ -59,7 +53,7 @@ object SharedDate{
 class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     val TAG = "PJ MainActivity"
 
@@ -70,13 +64,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         SharedDate.mLongerHeaders.add(getString(R.string.small_room))
         SharedDate.mLongerHeaders.add(getString(R.string.big_room))
 
 
-
-
+//
+////        val text: String = java.lang.String.valueOf(calendar.get(Calendar.DAY_OF_WEEK))
+//        val dayOfWeekNumber = SimpleDateFormat("u", Locale.US).format(DateTime.now().millis).toInt()
+//
+//        Log.e(TAG, "${Calendar.getInstance().get(Calendar.DAY_OF_WEEK)} a powinno byc: $dayOfWeekNumber," +
+//                "albo: ${LocalDate.now().dayOfWeek}")
 
 
 
