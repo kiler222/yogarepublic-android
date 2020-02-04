@@ -1,5 +1,6 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -8,8 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_timetable.*
 import org.joda.time.DateTime
+import java.lang.reflect.Type
 //import sun.jvm.hotspot.utilities.IntArray
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -72,6 +76,9 @@ class TimetableFragment() : Fragment() {
         // add your fragments
 
         // add your fragments
+
+
+
 
         adapter.addFrag(MondayFragment(), getString(R.string.monday))
         adapter.addFrag(TuesdayFragment(), getString(R.string.tuesday))

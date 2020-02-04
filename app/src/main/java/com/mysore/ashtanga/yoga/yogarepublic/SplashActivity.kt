@@ -1,35 +1,56 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.github.kittinunf.fuel.Fuel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.joda.time.DateTime
 import org.json.JSONArray
 import org.json.JSONObject
+
+import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 class SplashActivity : AppCompatActivity() {
     private val TAG = "PJ splash"
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        val sharedPref = this@SplashActivity.getSharedPreferences("sharedPref",Context.MODE_PRIVATE)
+
+        val sunBig = sharedPref?.getString("sunBig", "")
+        if (!sunBig.isNullOrEmpty()) {
+            readTimetable(this@SplashActivity)
+        }
+
+
         val now = DateTime.now()
         val mNowLong = now.withTimeAtStartOfDay().millis
-        val mNowplus7Long = now.withTimeAtStartOfDay().plusDays(7).minusSeconds(1).millis
+        val mNowplus7Long = now.withTimeAtStartOfDay().plusDays(6).millis //.minusSeconds(1).millis
 
         val mNowHuman = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(mNowLong)
         val mNowplus7Human = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(mNowplus7Long)
+
+
+
+        Log.e(TAG, "now: $mNowHuman, plus7: $mNowplus7Human")
 
         val pattern = "yyyy-MM-dd"
         val simpleDateFormat = SimpleDateFormat(pattern)
         val startDate: String = simpleDateFormat.format(Date())
 
 
-        Log.e(TAG, "data: $startDate - zaraz odpytamy o grafik")
+//        Log.e(TAG, "data: $startDate - zaraz odpytamy o grafik")
 
 
         Fuel.get("https://api-frontend2.efitness.com.pl/api/clubs/324/schedules/classes?dateFrom=${mNowHuman}&dateTo=${mNowplus7Human}")
@@ -42,7 +63,7 @@ class SplashActivity : AppCompatActivity() {
 
                 val (data, error) = result
 
-                Log.e(TAG, "pobrany grafik - error=${error}")
+//                Log.e(TAG, "pobrany grafik - error=${error}")
                 var obj = JSONObject(data)
 
                 val wynikArray = obj.getJSONArray("results")
@@ -217,23 +238,68 @@ class SplashActivity : AppCompatActivity() {
                         sunSmall.sortWith(compareBy({it.get("start").toString()}))
 
 
-                        SharedDate.mondaySmall = monSmall
-                        SharedDate.mondayBig = monBig
-                        SharedDate.tuesdaySmall = tueSmall
-                        SharedDate.tuesdayBig = tueBig
-                        SharedDate.wednesdaySmall = wedSmall
-                        SharedDate.wednesdayBig = wedBig
-                        SharedDate.thursdaySmall = thuSmall
-                        SharedDate.thursdayBig = thuBig
-                        SharedDate.fridaySmall = friSmall
-                        SharedDate.fridayBig = friBig
-                        SharedDate.saturdaySmall = satSmall
-                        SharedDate.saturdayBig = satBig
-                        SharedDate.sundaySmall = sunSmall
-                        SharedDate.sundayBig = sunBig
+//                        SharedDate.mondaySmall = monSmall
+//                        SharedDate.mondayBig = monBig
+//                        SharedDate.tuesdaySmall = tueSmall
+//                        SharedDate.tuesdayBig = tueBig
+//                        SharedDate.wednesdaySmall = wedSmall
+//                        SharedDate.wednesdayBig = wedBig
+//                        SharedDate.thursdaySmall = thuSmall
+//                        SharedDate.thursdayBig = thuBig
+//                        SharedDate.fridaySmall = friSmall
+//                        SharedDate.fridayBig = friBig
+//                        SharedDate.saturdaySmall = satSmall
+//                        SharedDate.saturdayBig = satBig
+//                        SharedDate.sundaySmall = sunSmall
+//                        SharedDate.sundayBig = sunBig
 
-//                        monBig.forEach {
-//                            Log.e(TAG, "bigMonForeach: ${it.toString()}")
+
+//                        val type: Type = object : TypeToken<ArrayList<Map<String, Any>>>() {}.getType()
+
+
+                        val editor = sharedPref.edit()
+                        val gson = Gson()
+
+                        val jsonMonSmall = gson.toJson(monSmall)
+                        val jsonMonBig = gson.toJson(monBig)
+                        val jsonTueSmall = gson.toJson(tueSmall)
+                        val jsonTueBig = gson.toJson(tueBig)
+                        val jsonWedSmall = gson.toJson(wedSmall)
+                        val jsonWedBig = gson.toJson(wedBig)
+                        val jsonThuSmall = gson.toJson(thuSmall)
+                        val jsonThuBig = gson.toJson(thuBig)
+                        val jsonFriSmall = gson.toJson(friSmall)
+                        val jsonFriBig = gson.toJson(friBig)
+                        val jsonSatSmall = gson.toJson(satSmall)
+                        val jsonSatBig = gson.toJson(satBig)
+                        val jsonSunSmall = gson.toJson(sunSmall)
+                        val jsonSunBig = gson.toJson(sunBig)
+
+                        editor.putString("monSmall", jsonMonSmall)
+                        editor.putString("monBig", jsonMonBig)
+                        editor.putString("tueSmall", jsonTueSmall)
+                        editor.putString("tueBig", jsonTueBig)
+                        editor.putString("wedSmall", jsonWedSmall)
+                        editor.putString("wedBig", jsonWedBig)
+                        editor.putString("thuSmall", jsonThuSmall)
+                        editor.putString("thuBig", jsonThuBig)
+                        editor.putString("friSmall", jsonFriSmall)
+                        editor.putString("friBig", jsonFriBig)
+                        editor.putString("satSmall", jsonSatSmall)
+                        editor.putString("satBig", jsonSatBig)
+                        editor.putString("sunSmall", jsonSunSmall)
+                        editor.putString("sunBig", jsonSunBig)
+                        editor.apply()
+
+
+
+
+                        readTimetable(this@SplashActivity)
+
+                        Log.e(TAG, "jest zbudowany grafik")
+
+//                        tueBig.forEach {
+//                            Log.e(TAG, "tueBigForeach: ${it.toString()}")
 //                        }
 //
 //                        monSmall.forEach {
@@ -249,6 +315,13 @@ class SplashActivity : AppCompatActivity() {
 
 
             }
+
+
+
+
+
+
+
 
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)

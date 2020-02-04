@@ -62,7 +62,7 @@ class ThursdayFragment: Fragment() {
 
         timeTable!!.setShowHeader(true)
         timeTable!!.setTableMode(TimeTableView.TableMode.SHORT)
-        val begining = SharedDate.thursdayBig[0].getValue("start") as Long
+        val begining = (SharedDate.thursdayBig[0].getValue("start") as Double).toLong()
         val date = Date(begining)
         val format = SimpleDateFormat("yyyy.MM.dd")
         val dateBegining = format.format(date)
@@ -88,16 +88,13 @@ class ThursdayFragment: Fragment() {
         SharedDate.thursdaySmall.forEach {
 
             val col = selectColor(it.getValue("name").toString())
-
-            val st = Date(it.getValue("start") as Long)
+            val st = Date((it.getValue("start") as Double).toLong())
             val startTime = SimpleDateFormat("HH:mm").format(st)
-            val et = Date(it.getValue("end") as Long)
+            val et = Date((it.getValue("end") as Double).toLong())
             val endTime = SimpleDateFormat("HH:mm").format(et)
-
-
             var td1 = TimeData(0, "$startTime - $endTime\n${it.getValue("name")} - ${it.getValue("teacher")}",
-                col, R.color.white, it.getValue("start") as Long,
-                it.getValue("end") as Long)
+                col, R.color.white, (it.getValue("start") as Double).toLong(),
+                (it.getValue("end") as Double).toLong())
             values.add(td1)
 
         }
@@ -118,16 +115,13 @@ class ThursdayFragment: Fragment() {
 
 
             val col = selectColor(it.getValue("name").toString())
-
-            val st = Date(it.getValue("start") as Long)
+            val st = Date((it.getValue("start") as Double).toLong())
             val startTime = SimpleDateFormat("HH:mm").format(st)
-            val et = Date(it.getValue("end") as Long)
+            val et = Date((it.getValue("end") as Double).toLong())
             val endTime = SimpleDateFormat("HH:mm").format(et)
-
-
             var td1 = TimeData(0, "$startTime - $endTime\n${it.getValue("name")} - ${it.getValue("teacher")}",
-                col, R.color.white, it.getValue("start") as Long,
-                it.getValue("end") as Long)
+                col, R.color.white, (it.getValue("start") as Double).toLong(),
+                (it.getValue("end") as Double).toLong())
             values2.add(td1)
 
         }

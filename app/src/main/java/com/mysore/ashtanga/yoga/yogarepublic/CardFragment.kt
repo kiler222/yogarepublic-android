@@ -1,16 +1,14 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
-import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 
 import com.google.zxing.BarcodeFormat
@@ -61,11 +59,61 @@ class CardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val sharedPref = activity?.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
 
-        userNumber.visibility = View.GONE
-        barcodeImageView.visibility = View.GONE
-        logoutButton.visibility = View.GONE
-        userName.text = ""
+        SharedDate.isLogged = sharedPref!!.getBoolean("isLogged", false)
+        SharedDate.userName = sharedPref.getString("userName", "") ?: ""
+        SharedDate.cardNumber = sharedPref.getString("cardNumber", "") ?: ""
+
+        Log.e(TAG, "jaki jest shared.islogged: ${SharedDate.isLogged}, zalogowany jest: ${SharedDate.userName}, karta: ${SharedDate.cardNumber}")
+        if (SharedDate.isLogged) {
+
+            cardNumber.visibility = View.VISIBLE
+            barcodeImageView.visibility = View.VISIBLE
+            logoutButton.visibility = View.VISIBLE
+            userName.text = SharedDate.userName
+            cardNumber.text = SharedDate.cardNumber
+            emailField.visibility = View.GONE
+            passwordField.visibility = View.GONE
+            button.visibility = View.GONE
+            userName.visibility = View.VISIBLE
+
+            val bitMatrix: BitMatrix
+            try {
+                bitMatrix = MultiFormatWriter().encode(
+                    SharedDate.cardNumber,
+                    BarcodeFormat.ITF,
+                    300, 80, null
+                )
+
+                val bEnc = BarcodeEncoder()
+
+                val bitmap = bEnc.createBitmap(bitMatrix)
+
+                barcodeImageView.setImageBitmap(bitmap)
+                barcodeImageView.visibility = View.VISIBLE
+
+                cardNumber.text = SharedDate.cardNumber
+                cardNumber.visibility = View.VISIBLE
+
+            } catch (Illegalargumentexception: IllegalArgumentException) {
+                Log.e(TAG, Illegalargumentexception.localizedMessage)
+            }
+
+
+
+
+        } else {
+
+            cardNumber.visibility = View.GONE
+            barcodeImageView.visibility = View.GONE
+            logoutButton.visibility = View.GONE
+            userName.text = ""
+            emailField.visibility = View.VISIBLE
+            passwordField.visibility = View.VISIBLE
+            button.visibility = View.VISIBLE
+        }
+
 
 
 
@@ -90,7 +138,14 @@ class CardFragment : Fragment() {
                 userName.text = ""
                 emailField.setText("")
                 passwordField.setText("")
-                userNumber.text = ""
+                cardNumber.text = ""
+                SharedDate.login = ""
+                SharedDate.cardNumber = ""
+                SharedDate.userName = ""
+                sharedPref!!.edit().remove("login").apply()
+                sharedPref!!.edit().remove("cardNumber").apply()
+                sharedPref!!.edit().remove("userName").apply()
+                sharedPref!!.edit().putBoolean("isLogged", false).apply()
                 emailField.visibility = View.VISIBLE
                 passwordField.visibility = View.VISIBLE
                 button.visibility = View.VISIBLE
@@ -104,7 +159,7 @@ class CardFragment : Fragment() {
 
             // Display a neutral button on alert dialog
             builder.setNeutralButton(getString(R.string.no)){_,_ ->
-                Toast.makeText(context,"You cancelled the dialog.",Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context,"You cancelled the dialog.",Toast.LENGTH_SHORT).show()
             }
 
             // Finally, make the alert dialog using builder
@@ -140,7 +195,7 @@ class CardFragment : Fragment() {
             loginName = "pjobkiewicz@gmail.com"
 
 
-            Log.e(TAG, "klikniety button: $loginName, $password")
+//            Log.e(TAG, "klikniety button: $loginName, $password")
 
 
 
@@ -151,43 +206,53 @@ class CardFragment : Fragment() {
 
                 if (memberToken.startsWith("PJerror", false)) {
 
-                    Log.e(TAG, "error logowania: $memberToken")
-                    Log.e(TAG, "activity: ${activity.toString()}")
+//                    Log.e(TAG, "error logowania: $memberToken")
+//                    Log.e(TAG, "activity: ${activity.toString()}")
 
-                    Toast.makeText(activity?.baseContext, getString(R.string.login_error), Toast.LENGTH_LONG).show()
-
-
-
-
-                    activity?.runOnUiThread {
-                        Toast.makeText(
-                            context,
-                            "Your Message here",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+//                    Toast.makeText(activity?.baseContext, getString(R.string.login_error), Toast.LENGTH_LONG).show()
+//
+//
+//
+//
+//                    activity?.runOnUiThread {
+//                        Toast.makeText(
+//                            context,
+//                            "Your Message here",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }
 
 
 
                 } else {
 
+                    SharedDate.login = loginName
+                    SharedDate.isLogged = true
+
+                    sharedPref!!.edit().putString("login", loginName).apply()
+                    sharedPref!!.edit().putBoolean("isLogged", true).apply()
+
                     activity?.runOnUiThread {
                         button.visibility = View.GONE
                         emailField.visibility = View.GONE
                         passwordField.visibility = View.GONE
-                        logoutButton.visibility = View.VISIBLE
+
                     }
 
 
-                    Log.e(TAG, "nie ma błędu logowania: $memberToken")
+//                    Log.e(TAG, "nie ma błędu logowania: $memberToken")
 
-                    getUserData(loginName!!){cardNumber ->
-                        Log.e(TAG, "odczytany numer karty: $cardNumber")
+                    getUserData(loginName!!){cNumber ->
+//                        Log.e(TAG, "odczytany numer karty: $cardNumber")
+
+
+                        SharedDate.cardNumber = cNumber
+                        sharedPref!!.edit().putString("cardNumber", cNumber).apply()
 
                         val bitMatrix: BitMatrix
                         try {
                             bitMatrix = MultiFormatWriter().encode(
-                                cardNumber,
+                                cNumber,
                                 BarcodeFormat.ITF,
                                 300, 80, null
                             )
@@ -197,9 +262,10 @@ class CardFragment : Fragment() {
                             val bitmap = bEnc.createBitmap(bitMatrix)
 
                             barcodeImageView.setImageBitmap(bitmap)
-                            barcodeImageView.visibility = View.VISIBLE
-                            userNumber.text = cardNumber
-                            userNumber.visibility = View.VISIBLE
+//                            barcodeImageView.visibility = View.VISIBLE
+
+                            cardNumber.text = cNumber
+
 
                         } catch (Illegalargumentexception: IllegalArgumentException) {
                             Log.e(TAG, Illegalargumentexception.localizedMessage)
@@ -216,10 +282,19 @@ class CardFragment : Fragment() {
 
                             Log.e(TAG, "get personal: $it")
 
-                            userName.text = it
-
+                            activity?.runOnUiThread {
+                                userName.text = it
+                                userName.visibility = View.VISIBLE
+                                logoutButton.visibility = View.VISIBLE
+                                barcodeImageView.visibility = View.VISIBLE
+                                cardNumber.visibility = View.VISIBLE
+                            }
 
                             Log.e(TAG, "zakonczone odpytanie efitnesu")
+                            sharedPref.edit().putString("userName", it).apply()
+                            SharedDate.userName = it
+                            Log.e(TAG, "zakonczone odpytanie efitnesu: ${sharedPref!!.getString("userName", "asd")}")
+
 
 
                         }
@@ -233,16 +308,16 @@ class CardFragment : Fragment() {
 
     }
 
-
-    fun usernameError() : String{
-        Toast.makeText(context, "zly user", Toast.LENGTH_SHORT).show()
-        return "zly user"
-    }
-
-
-    fun passwordError(){
-        Toast.makeText(context, "zle haslo", Toast.LENGTH_SHORT).show()
-    }
+//
+//    fun usernameError() : String{
+//        Toast.makeText(context, "zly user", Toast.LENGTH_SHORT).show()
+//        return "zly user"
+//    }
+//
+//
+//    fun passwordError(){
+//        Toast.makeText(context, "zle haslo", Toast.LENGTH_SHORT).show()
+//    }
 
 
 

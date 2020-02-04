@@ -17,10 +17,13 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import org.joda.time.DateTime
 import org.json.JSONArray
 import org.json.JSONObject
+import java.lang.reflect.Type
 
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,6 +32,7 @@ import kotlin.collections.ArrayList
 object SharedDate{
     var mondayBig = ArrayList<Map<String, Any>>()
     var mondaySmall = ArrayList<Map<String, Any>>()
+    var mondaySmallTest = ArrayList<Map<String, Any>>()
     var tuesdayBig = ArrayList<Map<String, Any>>()
     var tuesdaySmall = ArrayList<Map<String, Any>>()
     var wednesdayBig = ArrayList<Map<String, Any>>()
@@ -42,9 +46,11 @@ object SharedDate{
     var sundayBig = ArrayList<Map<String, Any>>()
     var sundaySmall = ArrayList<Map<String, Any>>()
     var mLongerHeaders = ArrayList<String>()
-    var clubCardNumber = String
+    var cardNumber = ""
     val db = FirebaseFirestore.getInstance()
-
+    var isLogged = false
+    var login = ""
+    var userName = ""
 
 }
 
@@ -59,7 +65,6 @@ class MainActivity : AppCompatActivity() {
 
 //    var Grafik = ArrayList<Grafik>()
 
-    var Timetable = ArrayList<Timetable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,12 +83,10 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-
         bottom_app_bar.setOnNavigationItemSelectedListener { item: MenuItem ->
             return@setOnNavigationItemSelectedListener when (item.itemId) {
                 R.id.app_bar_card -> {
-                    Toast.makeText(this, "Card item click", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, "Card item click", Toast.LENGTH_SHORT).show()
 //
                     val fragment = CardFragment()
                     supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment, fragment.javaClass.getSimpleName())
@@ -92,9 +95,17 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.app_bar_timetable -> {
 
-                    Toast.makeText(this, "Card item click", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, "Card item click", Toast.LENGTH_SHORT).show()
 
-                    if (SharedDate.mondayBig.isNullOrEmpty()){
+//                    readTimetable(this@MainActivity)
+
+                    Log.e(TAG, "sprawdzenie zaraz mondayBig")
+
+                    val sharedPref = this@MainActivity.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+
+
+                    val sunBig = sharedPref?.getString("sunBig", "")
+                    if (sunBig.isNullOrEmpty()){
 
                         Toast.makeText(this, getString(R.string.loading_data), Toast.LENGTH_SHORT).show()
                         false
@@ -115,20 +126,33 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        if (savedInstanceState == null) {
-            // 2
+        if (SharedDate.isLogged == true) {
 
-//            Log.e(TAG, "savedinstancestate null")
 
+            Log.e(TAG, "isLogged: ${SharedDate.isLogged}")
+            val fragment = TimetableFragment()
+
+            supportFragmentManager
+                // 3
+                .beginTransaction()
+                // 4
+                .add(R.id.fragment, fragment, "")
+                // 5
+                .commit()
+
+
+        } else {
             val fragment = CardFragment()
 
             supportFragmentManager
                 // 3
                 .beginTransaction()
                 // 4
-                .add(R.id.fragment, fragment, "dogList")
+                .add(R.id.fragment, fragment, "")
                 // 5
                 .commit()
+
+
         }
 
 
@@ -211,6 +235,62 @@ fun Activity.hideKeyboard() {
 fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+
+fun readTimetable(context: Context) {
+
+
+    val sharedPref = context.getSharedPreferences("sharedPref", Context.MODE_PRIVATE) ?: return
+
+    val gson = Gson()
+    val type: Type = object : com.google.common.reflect.TypeToken<java.util.ArrayList<Map<String, Any>>>() {}.getType()
+
+
+    val monSmall = sharedPref?.getString("monSmall", "")
+    SharedDate.mondaySmall = gson.fromJson(monSmall, type)
+
+    val monBig = sharedPref?.getString("monBig", "")
+    SharedDate.mondayBig = gson.fromJson(monBig, type)
+
+    val tueSmall = sharedPref?.getString("tueSmall", "")
+    SharedDate.tuesdaySmall= gson.fromJson(tueSmall, type)
+
+    val tueBig = sharedPref?.getString("tueBig", "")
+    SharedDate.tuesdayBig = gson.fromJson(tueBig, type)
+
+    val wedSmall = sharedPref?.getString("wedSmall", "")
+    SharedDate.wednesdaySmall= gson.fromJson(wedSmall, type)
+
+    val wedBig = sharedPref?.getString("wedBig", "")
+    SharedDate.wednesdayBig = gson.fromJson(wedBig, type)
+
+    val thuSmall = sharedPref?.getString("thuSmall", "")
+    SharedDate.thursdaySmall= gson.fromJson(thuSmall, type)
+
+    val thuBig = sharedPref?.getString("thuBig", "")
+    SharedDate.thursdayBig = gson.fromJson(thuBig, type)
+
+    val friSmall = sharedPref?.getString("friSmall", "")
+    SharedDate.fridaySmall= gson.fromJson(friSmall, type)
+
+    val friBig = sharedPref?.getString("friBig", "")
+    SharedDate.fridayBig = gson.fromJson(friBig, type)
+
+    val satSmall = sharedPref?.getString("satSmall", "")
+    SharedDate.saturdaySmall= gson.fromJson(satSmall, type)
+
+    val satBig = sharedPref?.getString("satBig", "")
+    SharedDate.saturdayBig = gson.fromJson(satBig, type)
+
+    val sunSmall = sharedPref?.getString("sunSmall", "")
+    SharedDate.sundaySmall= gson.fromJson(sunSmall, type)
+
+    val sunBig = sharedPref?.getString("sunBig", "")
+    SharedDate.sundayBig = gson.fromJson(sunBig, type)
+
+    Log.e("PJ MainActivity", "koniec readTimetable")
+
 }
 
 

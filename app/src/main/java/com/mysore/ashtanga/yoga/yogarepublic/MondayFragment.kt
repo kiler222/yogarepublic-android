@@ -1,5 +1,6 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
+import android.content.Context
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -12,9 +13,12 @@ import com.github.eunsiljo.timetablelib.data.TimeData
 import com.github.eunsiljo.timetablelib.data.TimeTableData
 import com.github.eunsiljo.timetablelib.view.TimeTableView
 import com.github.kittinunf.fuel.Fuel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_monday.*
 import org.joda.time.DateTime
 import org.json.JSONObject
+import java.lang.reflect.Type
 
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,7 +53,7 @@ class MondayFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
 
-        Log.e(TAG, mLongHeaders.toString())
+//        Log.e(TAG, mLongHeaders.toString())
 
     }
 
@@ -69,7 +73,7 @@ class MondayFragment : Fragment() {
 
         timeTable!!.setShowHeader(true)
         timeTable!!.setTableMode(TimeTableView.TableMode.SHORT)
-        val begining = SharedDate.mondayBig[0].getValue("start") as Long
+        val begining = (SharedDate.mondayBig[0].getValue("start") as Double).toLong()
         val date = Date(begining)
         val format = SimpleDateFormat("yyyy.MM.dd")
         val dateBegining = format.format(date)
@@ -77,43 +81,11 @@ class MondayFragment : Fragment() {
         mNow = df.parse(dateBegining).time
 
 
-//        val pattern = "yyyy-MM-dd"
-//        val simpleDateFormat = SimpleDateFormat(pattern)
-//        val startDate: String = simpleDateFormat.format(Date())
-//
-//        Log.e(TAG, "data: $startDate")
+        val isLogged = activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean("isLogged", false)
+
+        Log.e(TAG, "islogged = $isLogged")
 
 
-//        Fuel.get("https://api-frontend2.efitness.com.pl/api/clubs/324/schedules/classes?dateFrom=2020-01-27T00:00:00&dateTo=2020-01-27T23:59:00")
-//            .header("Accept" to "application/json")
-//            .header("api-access-token" to "bih/AiXX0k2mqZGz44y+Ag==")
-////            .header("member-token" to "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMTYxNTI2Iiwic3ViIjoicGpvYmtpZXdpY3pAZ21haWwuY29tIiwianRpIjoiNTlhMWEyNGYtZTA0OS00ZmUwLWJkZWEtNDdhMjZkNjVmNjZkIiwiaWF0IjoxNTgwMzMwNjkxLCJpZCI6IjExNjE1MjYiLCJuYmYiOjE1ODAzMzA2OTAsImV4cCI6MTU4MDMzNzg5MCwiaXNzIjoiYXBpRnJvbnRlbmQiLCJhdWQiOiJodHRwczovL2FwaS1mcm9udGVuZDIuZWZpdG5lc3MuY29tLnBsIn0.mwEwqQBlIaYp57313VsvsBWYrmDVuBwhuiN1ZjoVfdmcsgXBk8IgtNm_pu2KL1j7DOXeyIZYIbvTHwoXUqb5Xcwk5blVg3LgP6hPtE2CiCTqeQu3AxkISUCDYXvdkhQGEoG_hVg-gJ3yTGdJFZdQ0i2hE_sGI2W97-PHNl8oqWgOn13QYN7OWGQ0rlICr0MJIlpoxjD0Cw97O2h1kV32f1KPSP-uhlEYNTZQEQ-79c-GAxBWeTYwSqYWx4PqFxbH5sodCpWghvAWeyqrxvFdDADPdNNPQpkYXHI2AOeFSFATBVQ3VZ0z__3bBZtWx_W7SC22mSZOS-jwzA6kbX4G8w")
-//            .also { println(it) }
-//            .responseString { _, reponse, result ->
-//
-//                val (data, error) = result
-//
-//                var obj = JSONObject(data)
-//
-//                val wynikArray = obj.getJSONArray("results")
-//
-//                val zajecia = wynikArray[0] as JSONObject
-//
-////                val klasy = obj.get("results") as JSONObject
-//                Log.e(TAG, "wynik  ${wynikArray[0].toString()}")
-//                Log.e(TAG, "Zajecia:  ${zajecia.getString("name")}")
-//                Log.e(TAG, "Zajecia start:  ${zajecia.getString("startDate")}")
-//                Log.e(TAG, "Zajecia end:  ${zajecia.getString("endDate")}")
-//                Log.e(TAG, "Zajecia trwaja:  ${zajecia.getString("duration")} minut")
-//                Log.e(TAG, "Zajecia prowadzi:  ${zajecia.getString("instructorName")}")
-//
-//                val startD = zajecia.getString("startDate") as Date
-//                val endD = zajecia.getString("endDate") as Date
-//                val name = zajecia.getString("name")
-//                val nameIns = zajecia.getString("instructorName")
-//
-//
-//            }
 
 
 
@@ -135,25 +107,24 @@ class MondayFragment : Fragment() {
         val values: ArrayList<TimeData<*>> = ArrayList()
         var start = DateTime(date)
 
-        Log.e(TAG, "wyglad daty w fragment: $start")
+//        Log.e(TAG, "wyglad daty w fragment: $start")
+//
+//        Log.e(TAG, date.toString())
 
-        Log.e(TAG, date.toString())
+
+
 
 
         SharedDate.mondaySmall.forEach {
 
             val col = selectColor(it.getValue("name").toString())
-
-
-            val st = Date(it.getValue("start") as Long)
+            val st = Date((it.getValue("start") as Double).toLong())
             val startTime = SimpleDateFormat("HH:mm").format(st)
-            val et = Date(it.getValue("end") as Long)
+            val et = Date((it.getValue("end") as Double).toLong())
             val endTime = SimpleDateFormat("HH:mm").format(et)
-
-
             var td1 = TimeData(0, "$startTime - $endTime\n${it.getValue("name")} - ${it.getValue("teacher")}",
-            col, R.color.white, it.getValue("start") as Long,
-                it.getValue("end") as Long)
+            col, R.color.white, (it.getValue("start") as Double).toLong(),
+                (it.getValue("end") as Double).toLong())
         values.add(td1)
 
         }
@@ -171,18 +142,14 @@ class MondayFragment : Fragment() {
 
         SharedDate.mondayBig.forEach {
 
-
             val col = selectColor(it.getValue("name").toString())
-
-            val st = Date(it.getValue("start") as Long)
+            val st = Date((it.getValue("start") as Double).toLong())
             val startTime = SimpleDateFormat("HH:mm").format(st)
-            val et = Date(it.getValue("end") as Long)
+            val et = Date((it.getValue("end") as Double).toLong())
             val endTime = SimpleDateFormat("HH:mm").format(et)
-
-
             var td1 = TimeData(0, "$startTime - $endTime\n${it.getValue("name")} - ${it.getValue("teacher")}",
-                col, R.color.white, it.getValue("start") as Long,
-                it.getValue("end") as Long)
+                col, R.color.white, (it.getValue("start") as Double).toLong(),
+                (it.getValue("end") as Double).toLong())
             values2.add(td1)
 
         }
