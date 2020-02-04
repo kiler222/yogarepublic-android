@@ -11,4 +11,12 @@
     <string name="thursday">Czwartek</string>
     <string name="tuesday">Wtorek</string>
     <string name="wednesday">Środa</string>
+    <string name="email_address">Adres email</string>
+    <string name="fill_credentials">Wprowadź swój adres email i hasło do strefy klienta Yogarepublic.</string>
+    <string name="login">Zaloguj</string>
+    <string name="login_error">Błąd logowania. Spróbuj ponownie.</string>
+    <string name="logout_title">Chcesz się wylogować?</string>
+    <string name="no">NIE</string>
+    <string name="password">Hasło</string>
+    <string name="yes">TAK</string>
 </resources>

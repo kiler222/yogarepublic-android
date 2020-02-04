@@ -9,12 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+
 import androidx.fragment.app.Fragment
 
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
+
 import kotlinx.android.synthetic.main.fragment_card.*
 
 
@@ -59,11 +61,14 @@ class CardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        progressBar.visibility = View.GONE
+
         val sharedPref = activity?.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
 
         SharedDate.isLogged = sharedPref!!.getBoolean("isLogged", false)
         SharedDate.userName = sharedPref.getString("userName", "") ?: ""
         SharedDate.cardNumber = sharedPref.getString("cardNumber", "") ?: ""
+
 
         Log.e(TAG, "jaki jest shared.islogged: ${SharedDate.isLogged}, zalogowany jest: ${SharedDate.userName}, karta: ${SharedDate.cardNumber}")
         if (SharedDate.isLogged) {
@@ -142,10 +147,10 @@ class CardFragment : Fragment() {
                 SharedDate.login = ""
                 SharedDate.cardNumber = ""
                 SharedDate.userName = ""
-                sharedPref!!.edit().remove("login").apply()
-                sharedPref!!.edit().remove("cardNumber").apply()
-                sharedPref!!.edit().remove("userName").apply()
-                sharedPref!!.edit().putBoolean("isLogged", false).apply()
+                sharedPref.edit().remove("login").apply()
+                sharedPref.edit().remove("cardNumber").apply()
+                sharedPref.edit().remove("userName").apply()
+                sharedPref.edit().putBoolean("isLogged", false).apply()
                 emailField.visibility = View.VISIBLE
                 passwordField.visibility = View.VISIBLE
                 button.visibility = View.VISIBLE
@@ -179,7 +184,7 @@ class CardFragment : Fragment() {
 
             hideKeyboard()
 
-            var loginName = emailField.text.toString().trim().takeUnless { it.isNullOrEmpty() } //?: usernameError()
+            val loginName = emailField.text.toString().trim().takeUnless { it.isNullOrEmpty() } //?: usernameError()
             val password = passwordField.text.toString().trim().takeUnless { it.isNullOrEmpty() } //?: return passwordError()
 
 
@@ -190,37 +195,41 @@ class CardFragment : Fragment() {
             }
 
 
+            progressBar.visibility = View.VISIBLE
 
 
-            loginName = "pjobkiewicz@gmail.com"
+//            val tst = Toasty(activity?.baseContext)
+//
+//            tst.primaryToasty(activity?.baseContext, "asdasdasd", Toasty.LENGTH_SHORT, Toasty.TOP)
+
+//            loginName = "pjobkiewicz@gmail.com"
 
 
 //            Log.e(TAG, "klikniety button: $loginName, $password")
 
 
 
+//            "xiubofwo"
 
-
-            login(loginName, "xiubofwo", getString(R.string.api_access_token)){memberToken ->
+            login(loginName, password, getString(R.string.api_access_token)){memberToken ->
 
 
                 if (memberToken.startsWith("PJerror", false)) {
 
 //                    Log.e(TAG, "error logowania: $memberToken")
-//                    Log.e(TAG, "activity: ${activity.toString()}")
+//                    Log.e(TAG, "activity: ${activity.toString()}, context: ${view.context}")
 
-//                    Toast.makeText(activity?.baseContext, getString(R.string.login_error), Toast.LENGTH_LONG).show()
 //
-//
-//
-//
-//                    activity?.runOnUiThread {
-//                        Toast.makeText(
-//                            context,
-//                            "Your Message here",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
+
+
+                    activity?.runOnUiThread {
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(activity?.baseContext, getString(R.string.login_error), Toast.LENGTH_LONG).show()
+
+                    }
+
+
+
 
 
 
@@ -229,48 +238,42 @@ class CardFragment : Fragment() {
                     SharedDate.login = loginName
                     SharedDate.isLogged = true
 
-                    sharedPref!!.edit().putString("login", loginName).apply()
-                    sharedPref!!.edit().putBoolean("isLogged", true).apply()
-
-                    activity?.runOnUiThread {
-                        button.visibility = View.GONE
-                        emailField.visibility = View.GONE
-                        passwordField.visibility = View.GONE
-
-                    }
+                    sharedPref.edit().putString("login", loginName).apply()
+                    sharedPref.edit().putBoolean("isLogged", true).apply()
 
 
-//                    Log.e(TAG, "nie ma błędu logowania: $memberToken")
+                    setUserLastLogin(loginName){}
 
-                    getUserData(loginName!!){cNumber ->
-//                        Log.e(TAG, "odczytany numer karty: $cardNumber")
-
+                    getUserData(loginName){cNumber ->
 
                         SharedDate.cardNumber = cNumber
                         sharedPref!!.edit().putString("cardNumber", cNumber).apply()
 
-                        val bitMatrix: BitMatrix
-                        try {
-                            bitMatrix = MultiFormatWriter().encode(
-                                cNumber,
-                                BarcodeFormat.ITF,
-                                300, 80, null
-                            )
+                        if (cNumber != "No such document" && cNumber != "failed") {
 
-                            val bEnc = BarcodeEncoder()
 
-                            val bitmap = bEnc.createBitmap(bitMatrix)
+                            val bitMatrix: BitMatrix
+                            try {
+                                bitMatrix = MultiFormatWriter().encode(
+                                    cNumber,
+                                    BarcodeFormat.ITF,
+                                    300, 80, null
+                                )
 
-                            barcodeImageView.setImageBitmap(bitmap)
+                                val bEnc = BarcodeEncoder()
+
+                                val bitmap = bEnc.createBitmap(bitMatrix)
+
+                                barcodeImageView.setImageBitmap(bitmap)
 //                            barcodeImageView.visibility = View.VISIBLE
 
-                            cardNumber.text = cNumber
+                                cardNumber.text = cNumber
 
 
-                        } catch (Illegalargumentexception: IllegalArgumentException) {
-                            Log.e(TAG, Illegalargumentexception.localizedMessage)
+                            } catch (Illegalargumentexception: IllegalArgumentException) {
+                                Log.e(TAG, Illegalargumentexception.localizedMessage)
+                            }
                         }
-
 
                     }
 
@@ -282,20 +285,25 @@ class CardFragment : Fragment() {
 
                             Log.e(TAG, "get personal: $it")
 
-                            activity?.runOnUiThread {
-                                userName.text = it
-                                userName.visibility = View.VISIBLE
-                                logoutButton.visibility = View.VISIBLE
-                                barcodeImageView.visibility = View.VISIBLE
-                                cardNumber.visibility = View.VISIBLE
-                            }
+
 
                             Log.e(TAG, "zakonczone odpytanie efitnesu")
                             sharedPref.edit().putString("userName", it).apply()
                             SharedDate.userName = it
                             Log.e(TAG, "zakonczone odpytanie efitnesu: ${sharedPref!!.getString("userName", "asd")}")
 
+                            activity?.runOnUiThread {
+                                button.visibility = View.GONE
+                                emailField.visibility = View.GONE
+                                passwordField.visibility = View.GONE
+                                userName.text = it
+                                userName.visibility = View.VISIBLE
+                                logoutButton.visibility = View.VISIBLE
+                                barcodeImageView.visibility = View.VISIBLE
+                                cardNumber.visibility = View.VISIBLE
+                                progressBar.visibility = View.GONE
 
+                            }
 
                         }
                     }

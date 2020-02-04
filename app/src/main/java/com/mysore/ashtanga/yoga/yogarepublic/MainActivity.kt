@@ -195,6 +195,13 @@ class MainActivity : AppCompatActivity() {
                     val user = auth.currentUser
 
 
+                    val sharedPref = this@MainActivity.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+
+                    if (sharedPref!!.getBoolean("isLogged", false)) {
+                        setUserLastLogin(sharedPref.getString("login", "")!!){}
+                    }
+
+
 
                 } else {
                     // If sign in fails, display a message to the user.
@@ -220,8 +227,10 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
 }
+
+
+
 
 
 fun Fragment.hideKeyboard() {
