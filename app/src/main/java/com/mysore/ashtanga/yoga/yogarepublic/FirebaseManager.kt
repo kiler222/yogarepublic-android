@@ -39,7 +39,28 @@ fun getUserData(user: String, callback: (String) -> Unit) {
 }
 
 
+fun checkIfExist(userName: String, callback: (Boolean) -> Unit){
+    val TAG = "PJ checkIfExist"
+    val usersRef = SharedDate.db.collection("users").document(userName)
 
+    usersRef.get()
+        .addOnSuccessListener { document ->
+
+            //                Log.e(TAG, " w document mamy: ${document}")
+
+            if (document.data != null) {
+//                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+                callback(true)
+            } else {
+                Log.d(TAG, "No such document: ${document}")
+                callback(false)
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.d(TAG, "get failed with ", exception)
+            callback(false)
+        }
+}
 
 
 fun setUserLastLogin(user: String, callback: (String) -> Unit) {

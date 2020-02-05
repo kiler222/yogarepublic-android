@@ -201,16 +201,20 @@ class CardFragment : Fragment() {
 
             hideKeyboard()
 
-            var loginName = emailField.text.toString().trim().takeUnless { it.isNullOrEmpty() } //?: usernameError()
+            var loginName = emailField.text.toString().toLowerCase().trim().takeUnless { it.isNullOrEmpty() } //?: usernameError()
             var password = passwordField.text.toString().trim().takeUnless { it.isNullOrEmpty() } //?: return passwordError()
 
 
-//            if (loginName.isNullOrEmpty() || password.isNullOrEmpty()) {
-//
 
-//                Toast.makeText(activity?.baseContext, getString(R.string.fill_credentials), Toast.LENGTH_LONG).show()
-//                return@setOnClickListener
-//            }
+            if (loginName.isNullOrEmpty() || password.isNullOrEmpty()) {
+
+
+                Toast.makeText(activity?.baseContext, getString(R.string.fill_credentials), Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+
+
 
 
             progressBar.visibility = View.VISIBLE
@@ -218,12 +222,9 @@ class CardFragment : Fragment() {
             passwordField.visibility = View.GONE
             button.visibility = View.GONE
 
-//            val tst = Toasty(activity?.baseContext)
-//
-//            tst.primaryToasty(activity?.baseContext, "asdasdasd", Toasty.LENGTH_SHORT, Toasty.TOP)
 
-             loginName = "pjobkiewicz@gmail.com"
-            password = "xiubofwo"
+
+
 
 //            Log.e(TAG, "klikniety button: $loginName, $password")
 
@@ -264,8 +265,15 @@ class CardFragment : Fragment() {
                     sharedPref.edit().putString("login", loginName).apply()
                     sharedPref.edit().putBoolean("isLogged", true).apply()
 
-                    //TODO dorobic czy istneije taki user i wtedy go updateowac
-                    setUserLastLogin(loginName){}
+
+
+                    checkIfExist(loginName){exists ->
+
+                        if (exists) {
+                            setUserLastLogin(loginName){}
+                        }
+                    }
+
 
                     getUserData(loginName){cNumber ->
 

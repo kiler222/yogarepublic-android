@@ -197,7 +197,16 @@ class MainActivity : AppCompatActivity() {
                     val sharedPref = this@MainActivity.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
 
                     if (sharedPref!!.getBoolean("isLogged", false)) {
-                        setUserLastLogin(sharedPref.getString("login", "")!!){}
+
+                        val login = sharedPref.getString("login", "")!!
+                        checkIfExist(login){exists ->
+
+                            if (exists) {
+                                setUserLastLogin(login){}
+                            }
+                        }
+
+
                     }
 
 

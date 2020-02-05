@@ -6,7 +6,8 @@ import com.google.firebase.Timestamp
 
 val yrTest = "rgerfido@gmail.com,889477"
 
-
+val yr = ""
+val yr2 = ""
 
 
 fun addCardNumbers(){
@@ -16,11 +17,11 @@ fun addCardNumbers(){
 //    val batch = SharedDate.db.batch()
 
 
-    var tabYR = yrTest.split("NL")
+    var tabYR = yr2.split(";")
 
     tabYR.forEach{
         val userData= it.split(",")
-        val email = userData[0]
+        val email = userData[0].toLowerCase()
         val cardNumber = userData[1]
 //        val newUser = SharedDate.db.collection("users").document(email)
         val setCardNumber = hashMapOf("cardNumber" to cardNumber)
