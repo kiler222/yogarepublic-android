@@ -86,27 +86,35 @@ class CardFragment : Fragment() {
             userName.visibility = View.VISIBLE
 //            membershipNameField.visibility = View.GONE //VISIBLE
 
-            val bitMatrix: BitMatrix
-            try {
-                bitMatrix = MultiFormatWriter().encode(
-                    SharedDate.cardNumber,
-                    BarcodeFormat.ITF,
-                    300, 80, null
-                )
 
-                val bEnc = BarcodeEncoder()
+            if (SharedDate.cardNumber != "-1"){
+                val bitMatrix: BitMatrix
+                try {
+                    bitMatrix = MultiFormatWriter().encode(
+                        SharedDate.cardNumber,
+                        BarcodeFormat.ITF,
+                        300, 80, null
+                    )
 
-                val bitmap = bEnc.createBitmap(bitMatrix)
+                    val bEnc = BarcodeEncoder()
 
-                barcodeImageView.setImageBitmap(bitmap)
-                barcodeImageView.visibility = View.VISIBLE
+                    val bitmap = bEnc.createBitmap(bitMatrix)
 
-                cardNumber.text = SharedDate.cardNumber
-                cardNumber.visibility = View.VISIBLE
+                    barcodeImageView.setImageBitmap(bitmap)
+                    barcodeImageView.visibility = View.VISIBLE
 
-            } catch (Illegalargumentexception: IllegalArgumentException) {
-                Log.e(TAG, Illegalargumentexception.localizedMessage)
+                    cardNumber.text = SharedDate.cardNumber
+                    cardNumber.visibility = View.VISIBLE
+
+                } catch (Illegalargumentexception: IllegalArgumentException) {
+                    Log.e(TAG, Illegalargumentexception.localizedMessage)
+                }
+            } else {
+                cardNumber.visibility = View.GONE
+                barcodeImageView.visibility = View.GONE
             }
+
+
 
 
 
@@ -193,32 +201,35 @@ class CardFragment : Fragment() {
 
             hideKeyboard()
 
-            val loginName = emailField.text.toString().trim().takeUnless { it.isNullOrEmpty() } //?: usernameError()
-            val password = passwordField.text.toString().trim().takeUnless { it.isNullOrEmpty() } //?: return passwordError()
+            var loginName = emailField.text.toString().trim().takeUnless { it.isNullOrEmpty() } //?: usernameError()
+            var password = passwordField.text.toString().trim().takeUnless { it.isNullOrEmpty() } //?: return passwordError()
 
 
-            if (loginName.isNullOrEmpty() || password.isNullOrEmpty()) {
+//            if (loginName.isNullOrEmpty() || password.isNullOrEmpty()) {
+//
 
-                Toast.makeText(activity?.baseContext, getString(R.string.fill_credentials), Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
+//                Toast.makeText(activity?.baseContext, getString(R.string.fill_credentials), Toast.LENGTH_LONG).show()
+//                return@setOnClickListener
+//            }
 
 
             progressBar.visibility = View.VISIBLE
-
+            emailField.visibility = View.GONE
+            passwordField.visibility = View.GONE
+            button.visibility = View.GONE
 
 //            val tst = Toasty(activity?.baseContext)
 //
 //            tst.primaryToasty(activity?.baseContext, "asdasdasd", Toasty.LENGTH_SHORT, Toasty.TOP)
 
-//            loginName = "pjobkiewicz@gmail.com"
-
+             loginName = "pjobkiewicz@gmail.com"
+            password = "xiubofwo"
 
 //            Log.e(TAG, "klikniety button: $loginName, $password")
 
 
 
-//            "xiubofwo"
+//
 
             login(loginName, password, getString(R.string.api_access_token)){memberToken ->
 
@@ -233,6 +244,9 @@ class CardFragment : Fragment() {
 
                     activity?.runOnUiThread {
                         progressBar.visibility = View.GONE
+                        emailField.visibility = View.VISIBLE
+                        passwordField.visibility = View.VISIBLE
+                        button.visibility = View.VISIBLE
                         Toast.makeText(activity?.baseContext, getString(R.string.login_error), Toast.LENGTH_LONG).show()
 
                     }
@@ -250,7 +264,7 @@ class CardFragment : Fragment() {
                     sharedPref.edit().putString("login", loginName).apply()
                     sharedPref.edit().putBoolean("isLogged", true).apply()
 
-
+                    //TODO dorobic czy istneije taki user i wtedy go updateowac
                     setUserLastLogin(loginName){}
 
                     getUserData(loginName){cNumber ->
@@ -258,7 +272,8 @@ class CardFragment : Fragment() {
                         SharedDate.cardNumber = cNumber
                         sharedPref!!.edit().putString("cardNumber", cNumber).apply()
 
-                        if (cNumber != "No such document" && cNumber != "failed") {
+                        Log.e(TAG, "card number: $cNumber")
+                        if (cNumber != "No such document" && cNumber != "failed" && cNumber != "-1") {
 
 
                             val bitMatrix: BitMatrix
@@ -307,10 +322,17 @@ class CardFragment : Fragment() {
                                 userName.text = it
                                 userName.visibility = View.VISIBLE
                                 logoutButton.visibility = View.VISIBLE
-                                barcodeImageView.visibility = View.VISIBLE
-                                cardNumber.visibility = View.VISIBLE
-//                                membershipNameField.visibility = View.GONE //VISIBLE
                                 progressBar.visibility = View.GONE
+
+                                if (SharedDate.cardNumber != "-1"){
+                                    barcodeImageView.visibility = View.VISIBLE
+                                    cardNumber.visibility = View.VISIBLE
+                                } else {
+                                    barcodeImageView.visibility = View.GONE
+                                    cardNumber.visibility = View.GONE
+                                }
+
+//                                membershipNameField.visibility = View.GONE //VISIBLE
 
                             }
 

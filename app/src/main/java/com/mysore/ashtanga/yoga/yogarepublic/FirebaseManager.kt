@@ -15,22 +15,31 @@ fun getUserData(user: String, callback: (String) -> Unit) {
             if (document.data != null) {
 
 
-//                Log.e(TAG, "DocumentSnapshot data: ${document.data}")
+                Log.e(TAG, "DocumentSnapshot data: ${document.data}")
                 val cardNumber = document.data!!.get("cardNumber") as String
 
+                if (cardNumber.length % 2 == 0) {
+                    callback(cardNumber)
+                } else {
+                    callback("-1")
+                }
 
-                callback(cardNumber)
+
+
             } else {
                 Log.e(TAG, "No such document")
-                callback("No such document")
+                callback("-1")
             }
         }
         .addOnFailureListener { exception ->
             Log.e(TAG, "get failed with ", exception)
-            callback("failed")
+            callback("-1")
         }
 
 }
+
+
+
 
 
 fun setUserLastLogin(user: String, callback: (String) -> Unit) {
@@ -44,3 +53,7 @@ fun setUserLastLogin(user: String, callback: (String) -> Unit) {
 
 
 }
+
+
+
+

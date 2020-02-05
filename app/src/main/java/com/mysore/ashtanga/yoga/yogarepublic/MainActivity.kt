@@ -69,14 +69,15 @@ class MainActivity : AppCompatActivity() {
         SharedDate.mLongerHeaders.add(getString(R.string.big_room))
 
 
-//
-////        val text: String = java.lang.String.valueOf(calendar.get(Calendar.DAY_OF_WEEK))
-//        val dayOfWeekNumber = SimpleDateFormat("u", Locale.US).format(DateTime.now().millis).toInt()
-//
-//        Log.e(TAG, "${Calendar.getInstance().get(Calendar.DAY_OF_WEEK)} a powinno byc: $dayOfWeekNumber," +
-//                "albo: ${LocalDate.now().dayOfWeek}")
 
-
+//        var tabYR = yr.split("NL")
+//
+//        tabYR.forEach{
+//            val userData= it.split(",")
+//            val email = userData[0]
+//            val cardNumber = userData[1]
+//            Log.e(TAG, "rekordy: $email i karta: $cardNumber")
+//        }
 
 
 
@@ -199,6 +200,8 @@ class MainActivity : AppCompatActivity() {
                         setUserLastLogin(sharedPref.getString("login", "")!!){}
                     }
 
+
+//                    addCardNumbers()
 
 
                 } else {
