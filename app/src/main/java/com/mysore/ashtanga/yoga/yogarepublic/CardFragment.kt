@@ -2,6 +2,7 @@ package com.mysore.ashtanga.yoga.yogarepublic
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -81,6 +82,7 @@ class CardFragment : Fragment() {
             membershipNameField.text= SharedDate.membershipName
             cardNumber.text = SharedDate.cardNumber
             emailField.visibility = View.GONE
+            forgetPasswordButton.visibility = View.GONE
             passwordField.visibility = View.GONE
             button.visibility = View.GONE
             userName.visibility = View.VISIBLE
@@ -128,6 +130,7 @@ class CardFragment : Fragment() {
             userName.text = ""
             membershipNameField.text = ""
             emailField.visibility = View.VISIBLE
+            forgetPasswordButton.visibility = View.VISIBLE
             passwordField.visibility = View.VISIBLE
             button.visibility = View.VISIBLE
         }
@@ -168,6 +171,7 @@ class CardFragment : Fragment() {
                 sharedPref.edit().remove("userName").apply()
                 sharedPref.edit().putBoolean("isLogged", false).apply()
                 emailField.visibility = View.VISIBLE
+                forgetPasswordButton.visibility = View.VISIBLE
                 passwordField.visibility = View.VISIBLE
                 button.visibility = View.VISIBLE
                 logoutButton.visibility = View.GONE
@@ -196,6 +200,22 @@ class CardFragment : Fragment() {
 
         }
 
+
+        forgetPasswordButton.setOnClickListener {
+
+            val uris = Uri.parse("https://yogarepublic-cms.efitness.com.pl/Login/SystemResetPassword?returnurl=https%3A%2F%2Fyogarepublic-cms.efitness.com.pl%2F")
+            val intents = Intent(Intent.ACTION_VIEW, uris)
+            val b = Bundle()
+            b.putBoolean("new_window", true)
+            intents.putExtras(b)
+            startActivity(intents)
+
+
+        }
+
+
+
+
         button.setOnClickListener {
 
 
@@ -219,6 +239,7 @@ class CardFragment : Fragment() {
 
             progressBar.visibility = View.VISIBLE
             emailField.visibility = View.GONE
+            forgetPasswordButton.visibility = View.GONE
             passwordField.visibility = View.GONE
             button.visibility = View.GONE
 
@@ -246,6 +267,7 @@ class CardFragment : Fragment() {
                     activity?.runOnUiThread {
                         progressBar.visibility = View.GONE
                         emailField.visibility = View.VISIBLE
+                        forgetPasswordButton.visibility = View.VISIBLE
                         passwordField.visibility = View.VISIBLE
                         button.visibility = View.VISIBLE
                         Toast.makeText(activity?.baseContext, getString(R.string.login_error), Toast.LENGTH_LONG).show()
@@ -326,6 +348,7 @@ class CardFragment : Fragment() {
 
                                 button.visibility = View.GONE
                                 emailField.visibility = View.GONE
+                                forgetPasswordButton.visibility = View.GONE
                                 passwordField.visibility = View.GONE
                                 userName.text = it
                                 userName.visibility = View.VISIBLE

@@ -26,6 +26,8 @@
     <string name="no_membership">No valid membership</string>
     <string name="timetable">Timetable</string>
     <string name="my_card">My card</string>
+    <string name="forget_password">Forget password?</string>
+    <string name="logout">Logout</string>
 
 
 </resources>

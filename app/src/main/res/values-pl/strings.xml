@@ -22,4 +22,6 @@
     <string name="my_card">Moja karta</string>
     <string name="no_membership">Brak aktwynych umów</string>
     <string name="timetable">Grafik zajęć</string>
+    <string name="forget_password">Nie pamiętasz hasła?</string>
+    <string name="logout">Wyloguj</string>
 </resources>
