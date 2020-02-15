@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">Yogarepublic</string>
     <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
-    <string name="api_access_token" translatable="false">bih/AiXX0k2mqZGz44y+Ag==</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
 
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
@@ -26,7 +23,7 @@
     <string name="no_membership">No valid membership</string>
     <string name="timetable">Timetable</string>
     <string name="my_card">My card</string>
-    <string name="forget_password">Forget password?</string>
+    <string name="forget_password">Forgot password?</string>
     <string name="logout">Logout</string>
 
 

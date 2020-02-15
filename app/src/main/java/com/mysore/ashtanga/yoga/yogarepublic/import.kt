@@ -1,7 +1,6 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
 import android.util.Log
-import com.google.firebase.Timestamp
 
 
 val yrTest = "rgerfido@gmail.com,889477"
@@ -24,7 +23,7 @@ fun addCardNumbers(){
         val email = userData[0].toLowerCase()
         val cardNumber = userData[1]
 //        val newUser = SharedDate.db.collection("users").document(email)
-        val setCardNumber = hashMapOf("cardNumber" to cardNumber)
+        val setCardNumber = hashMapOf("a" to cardNumber)
 
 //        batch.set(newUser, setCardNumber)
 

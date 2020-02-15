@@ -10,7 +10,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
@@ -18,9 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
-
 import java.lang.reflect.Type
-import kotlin.collections.ArrayList
 
 object SharedDate{
     var mondayBig = ArrayList<Map<String, Any>>()
@@ -45,6 +42,7 @@ object SharedDate{
     var login = ""
     var userName = ""
     var membershipName = ""
+    var userID = ""
 
 }
 
@@ -57,18 +55,31 @@ class MainActivity : AppCompatActivity() {
 
     val TAG = "PJ MainActivity"
 
-//    var Grafik = ArrayList<Grafik>()
+
+
+//    static {
+//        System.loadLibrary("native-lib");
+//    }
+//
+//    public native String stringFromJNI();
+
+//    external fun stringFromJNI():String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+//        System.loadLibrary("native-lib")
+
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         SharedDate.mLongerHeaders.add(getString(R.string.small_room))
         SharedDate.mLongerHeaders.add(getString(R.string.big_room))
 
 
+//        val xx = stringFromJNI()
+//
+//        Log.e(TAG, "czy działa JNI??? = $xx")
 
 //        var tabYR = yr.split("NL")
 //

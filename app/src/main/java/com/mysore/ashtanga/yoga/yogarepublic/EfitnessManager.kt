@@ -10,7 +10,7 @@ import com.github.kittinunf.fuel.Fuel
 import org.json.JSONObject
 
 
-fun login(loginName: String, password: String, token: String, callback: (String) -> Unit) {
+fun login(loginName: String, password: String, token: String, callback: (String, String) -> Unit) {
 
     val TAG = "PJ efitlogin"
 
@@ -46,12 +46,14 @@ fun login(loginName: String, password: String, token: String, callback: (String)
                 val memberToken = obj.getString("accessToken")
                 val refreshToken = obj.getString("refreshToken")
                 val expiresIn = obj.getLong("expiresIn")
-                callback(memberToken)
+                    val id= obj.getString("id")
+                    Log.e(TAG, "taki jest id = $id")
+                callback(memberToken, id)
 
             } else {
 
                 Log.e(TAG, "jest błąd ${err}; response code: ${response.responseMessage}")
-                callback("PJerror ${err}")
+                callback("PJerror ${err}", "-1")
             }
 
 

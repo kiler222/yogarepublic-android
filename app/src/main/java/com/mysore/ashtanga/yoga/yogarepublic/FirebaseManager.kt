@@ -2,8 +2,6 @@ package com.mysore.ashtanga.yoga.yogarepublic
 
 import android.util.Log
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FirebaseFirestore
-import javax.security.auth.callback.Callback
 
 
 fun getUserData(user: String, callback: (String) -> Unit) {
@@ -16,7 +14,7 @@ fun getUserData(user: String, callback: (String) -> Unit) {
 
 
                 Log.e(TAG, "DocumentSnapshot data: ${document.data}")
-                val cardNumber = document.data!!.get("cardNumber") as String
+                val cardNumber = document.data!!.get("a") as String
 
                 if (cardNumber.length % 2 == 0) {
                     callback(cardNumber)
@@ -68,7 +66,7 @@ fun setUserLastLogin(user: String, callback: (String) -> Unit) {
 
     val docRef = SharedDate.db.collection("users").document(user)
 
-    docRef.update("lastLogin", Timestamp.now())
+    docRef.update("ll", Timestamp.now())
     .addOnSuccessListener { Log.e(TAG, "last login updated!") }
         .addOnFailureListener { e -> Log.e(TAG, "Error updating lastlogin", e) }
 

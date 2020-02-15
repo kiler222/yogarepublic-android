@@ -36,6 +36,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class CardFragment : Fragment() {
     // TODO: Rename and change types of parameters
+    external fun stringFromJNI():String
+
     private var param1: String? = null
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
@@ -61,6 +63,8 @@ class CardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        System.loadLibrary("card-lib")
+        val apiToken = stringFromJNI()
 
         progressBar.visibility = View.GONE
 
@@ -70,7 +74,7 @@ class CardFragment : Fragment() {
         SharedDate.userName = sharedPref.getString("userName", "") ?: ""
         SharedDate.cardNumber = sharedPref.getString("cardNumber", "") ?: ""
         SharedDate.membershipName = sharedPref.getString("membershipName", "") ?: ""
-
+        SharedDate.userID = sharedPref.getString("userID", "") ?: ""
 
         Log.e(TAG, "jaki jest shared.islogged: ${SharedDate.isLogged}, zalogowany jest: ${SharedDate.userName}, karta: ${SharedDate.cardNumber}")
         if (SharedDate.isLogged) {
@@ -166,7 +170,7 @@ class CardFragment : Fragment() {
                 SharedDate.userName = ""
                 sharedPref.edit().remove("login").apply()
                 sharedPref.edit().remove("membershipName").apply()
-
+                sharedPref.edit().remove("userID").apply()
                 sharedPref.edit().remove("cardNumber").apply()
                 sharedPref.edit().remove("userName").apply()
                 sharedPref.edit().putBoolean("isLogged", false).apply()
@@ -253,7 +257,8 @@ class CardFragment : Fragment() {
 
 //
 
-            login(loginName, password, getString(R.string.api_access_token)){memberToken ->
+
+            login(loginName, password, apiToken){memberToken, id ->
 
 
                 if (memberToken.startsWith("PJerror", false)) {
@@ -283,21 +288,23 @@ class CardFragment : Fragment() {
 
                     SharedDate.login = loginName
                     SharedDate.isLogged = true
+                    SharedDate.userID = id
 
                     sharedPref.edit().putString("login", loginName).apply()
+                    sharedPref.edit().putString("userID", id).apply()
                     sharedPref.edit().putBoolean("isLogged", true).apply()
 
 
 
-                    checkIfExist(loginName){exists ->
+                    checkIfExist(id){exists ->
 
                         if (exists) {
-                            setUserLastLogin(loginName){}
+                            setUserLastLogin(id){}
                         }
                     }
 
 
-                    getUserData(loginName){cNumber ->
+                    getUserData(id){cNumber ->
 
                         SharedDate.cardNumber = cNumber
                         sharedPref!!.edit().putString("cardNumber", cNumber).apply()
@@ -331,14 +338,14 @@ class CardFragment : Fragment() {
 
                     }
 
-                    getMembership(memberToken, getString(R.string.api_access_token), context!!){ membershipName, membershipValidTo ->
+                    getMembership(memberToken, apiToken, context!!){ membershipName, membershipValidTo ->
 
                         Log.e(TAG, "membership: $membershipName, valid: $membershipValidTo")
 //                        membershipNameField.text = membershipName
                         SharedDate.membershipName = membershipName
                         sharedPref.edit().putString("membershipName", membershipName).apply()
 
-                        getPersonalData(memberToken, getString(R.string.api_access_token)) {
+                        getPersonalData(memberToken, apiToken) {
 
                             Log.e(TAG, "username: $it")
                             sharedPref.edit().putString("userName", it).apply()
