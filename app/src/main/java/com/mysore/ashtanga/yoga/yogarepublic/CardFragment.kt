@@ -1,24 +1,30 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
+
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-
 import androidx.fragment.app.Fragment
-
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
-
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_card.*
+
+import java.util.*
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -141,7 +147,74 @@ class CardFragment : Fragment() {
 
 
 
+        membershipsButton.setOnClickListener {
 
+            progressBar.visibility = View.VISIBLE
+            val refreshToken = sharedPref.getString("refreshToken", "") ?: ""
+            val memberToken = sharedPref.getString("memberToken", "") ?: ""
+
+
+            val mainScreen = activity!!.mainAppView.rootView // findViewById<View>(R.id.m)
+            val bm = getBitmapFromView(mainScreen)
+//            var bStream  =  ByteArrayOutputStream()
+//            bm?.compress(Bitmap.CompressFormat.PNG, 50, bStream)
+//            val byteArray = bStream.toByteArray()
+            SharedDate.backgroudImage = bm
+
+//            Log.e(TAG, "bm width: ${bm?.width} i height: ${bm?.height}")
+            refreshAccessToken(refreshToken, memberToken, apiToken) { newMemberToken, id, newRefreshToken ->
+
+
+                if (newMemberToken.startsWith("PJerror", false)) {
+
+                        Toast.makeText(
+                            context,
+                            getString(R.string.login_error),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    progressBar.visibility = View.GONE
+
+                } else {
+
+                    getMembership(newMemberToken, apiToken, context!!){ memberships ->
+
+                        memberships.sortBy { it.expirationDate }
+                        memberships.reverse()
+
+                        var memberships2 = memberships
+//                        memberships2.add(memberships[1])
+//                        memberships2.add(memberships[1])
+
+                        memberships2.add(0, Membership("header", Date(), false))
+
+
+                        SharedDate.membershipsForRecyclerView = memberships2
+
+                        val intent = Intent(activity, MembershipsActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+
+//                        intent.putExtra("backgroundImage", byteArray )
+                        startActivity(intent)
+                        progressBar.visibility = View.GONE
+
+
+                    }
+                    sharedPref.edit().putString("refreshToken", newRefreshToken).apply()
+                    sharedPref.edit().putString("memberToken", newMemberToken).apply()
+                }
+
+            }
+
+
+
+
+
+
+
+
+
+
+        }
 
         logoutButton.setOnClickListener {
 
@@ -173,6 +246,8 @@ class CardFragment : Fragment() {
                 sharedPref.edit().remove("userID").apply()
                 sharedPref.edit().remove("cardNumber").apply()
                 sharedPref.edit().remove("userName").apply()
+                sharedPref.edit().remove("memberToken").apply()
+                sharedPref.edit().remove("refreshToken").apply()
                 sharedPref.edit().putBoolean("isLogged", false).apply()
                 emailField.visibility = View.VISIBLE
                 forgetPasswordButton.visibility = View.VISIBLE
@@ -258,7 +333,7 @@ class CardFragment : Fragment() {
 //
 
 
-            login(loginName, password, apiToken){memberToken, id ->
+            login(loginName, password, apiToken){memberToken, id, refreshToken ->
 
 
                 if (memberToken.startsWith("PJerror", false)) {
@@ -289,10 +364,13 @@ class CardFragment : Fragment() {
                     SharedDate.login = loginName
                     SharedDate.isLogged = true
                     SharedDate.userID = id
-
+                    Log.e(TAG, "taki refreshtokne po zalogowani: $refreshToken")
+                    Log.e(TAG, "taki memberToken po zalogowani: $memberToken")
                     sharedPref.edit().putString("login", loginName).apply()
                     sharedPref.edit().putString("userID", id).apply()
                     sharedPref.edit().putBoolean("isLogged", true).apply()
+                    sharedPref.edit().putString("refreshToken", refreshToken).apply()
+                    sharedPref.edit().putString("memberToken", memberToken).apply()
 
 
 
@@ -338,12 +416,12 @@ class CardFragment : Fragment() {
 
                     }
 
-                    getMembership(memberToken, apiToken, context!!){ membershipName, membershipValidTo ->
-
-                        Log.e(TAG, "membership: $membershipName, valid: $membershipValidTo")
-//                        membershipNameField.text = membershipName
-                        SharedDate.membershipName = membershipName
-                        sharedPref.edit().putString("membershipName", membershipName).apply()
+//                    getMembership(memberToken, apiToken, context!!){ membershipName, membershipValidTo ->
+//
+//                        Log.e(TAG, "membership: $membershipName, valid: $membershipValidTo")
+////                        membershipNameField.text = membershipName
+//                        SharedDate.membershipName = membershipName
+//                        sharedPref.edit().putString("membershipName", membershipName).apply()
 
                         getPersonalData(memberToken, apiToken) {
 
@@ -375,7 +453,7 @@ class CardFragment : Fragment() {
                             }
 
                         }
-                    }
+//                    }
 
                 }
 
@@ -454,4 +532,36 @@ class CardFragment : Fragment() {
                 }
             }
     }
+
+
+    private fun createBitmapFromView(
+        context: Context,
+        view: View
+    ): Bitmap? {
+        val displayMetrics = DisplayMetrics()
+        (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels)
+        view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
+        view.buildDrawingCache()
+        val bitmap = Bitmap.createBitmap(
+            view.measuredWidth,
+            view.measuredHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
+    }
+
+    fun getBitmapFromView(view: View): Bitmap? {
+        val returnedBitmap =
+            Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(returnedBitmap)
+        val bgDrawable = view.background
+        if (bgDrawable != null) bgDrawable.draw(canvas) else canvas.drawColor(Color.WHITE)
+        view.draw(canvas)
+        return returnedBitmap
+    }
+
 }

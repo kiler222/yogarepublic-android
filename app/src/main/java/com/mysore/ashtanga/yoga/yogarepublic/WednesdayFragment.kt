@@ -1,18 +1,15 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.github.eunsiljo.timetablelib.data.TimeData
 import com.github.eunsiljo.timetablelib.data.TimeTableData
 import com.github.eunsiljo.timetablelib.view.TimeTableView
 import kotlinx.android.synthetic.main.fragment_monday.*
-import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -68,6 +65,8 @@ class WednesdayFragment: Fragment() {
         val dateBegining = format.format(date)
         val df = SimpleDateFormat("yyyy.MM.dd")
         mNow = df.parse(dateBegining).time
+
+
 
         timeTable!!.setTimeTable(mNow, getTimetable(mNow, mLongHeaders))
 

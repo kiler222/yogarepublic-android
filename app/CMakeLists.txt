@@ -12,6 +12,12 @@ add_library(card-lib
 
         src/main/cpp/card-lib.cpp)
 
+add_library(memberships-lib
+        SHARED
+
+        src/main/cpp/memberships-lib.cpp)
+
+
 find_library( # Sets the name of the path variable.
         log-lib
 

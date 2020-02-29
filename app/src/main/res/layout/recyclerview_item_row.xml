@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+
+    <TextView
+            android:id="@+id/membershipName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/variable_bold"
+            android:maxLines="2"
+            android:text="Karnet VIP"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/expirationDate"
+            app:layout_constraintEnd_toStartOf="@id/expirationDate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/expirationDate" />
+
+    <TextView
+            android:id="@+id/expirationDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:fontFamily="@font/variable_bold"
+            android:text="30-07-2020"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/membershipName"
+            app:layout_constraintEnd_toStartOf="@+id/isValidDot"
+            app:layout_constraintStart_toEndOf="@id/membershipName"
+            app:layout_constraintTop_toTopOf="@+id/membershipName" />
+
+    <ImageView
+            android:id="@+id/isValidDot"
+            android:layout_width="24dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:tint="@color/mysorecolor"
+            app:layout_constraintBottom_toBottomOf="@+id/expirationDate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/expirationDate"
+            app:layout_constraintTop_toTopOf="@+id/expirationDate"
+            app:srcCompat="@drawable/ic_dot_24dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

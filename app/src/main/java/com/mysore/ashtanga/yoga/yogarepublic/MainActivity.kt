@@ -2,6 +2,7 @@ package com.mysore.ashtanga.yoga.yogarepublic
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -43,6 +44,8 @@ object SharedDate{
     var userName = ""
     var membershipName = ""
     var userID = ""
+    var membershipsForRecyclerView = ArrayList<Membership>()
+    var backgroudImage: Bitmap? = null //ByteArray(0)
 
 }
 

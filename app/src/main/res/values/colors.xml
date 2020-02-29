@@ -17,8 +17,8 @@
     <color name="mysorecolor">#F1834E</color>
     <color name="medytacjacolor">#AF81AE</color>
 
-
-
+    <color name="valid">#009900</color>
+    <color name="inValid">#CC0000</color>
 
     <color name="color_table_1">#007fe4</color>
     <color name="color_table_2">#5B399E</color>

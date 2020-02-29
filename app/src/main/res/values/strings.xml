@@ -25,6 +25,7 @@
     <string name="my_card">My card</string>
     <string name="forget_password">Forgot password?</string>
     <string name="logout">Logout</string>
+    <string name="memberships_button">My memberships</string>
 
 
 </resources>

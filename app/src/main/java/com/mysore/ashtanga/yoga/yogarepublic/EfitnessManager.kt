@@ -8,16 +8,18 @@ import android.util.Log
 
 import com.github.kittinunf.fuel.Fuel
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
-fun login(loginName: String, password: String, token: String, callback: (String, String) -> Unit) {
+fun login(loginName: String, password: String, token: String, callback: (String, String, String) -> Unit) {
 
     val TAG = "PJ efitlogin"
 
     val json = JSONObject()
     json.put("login", loginName)
     json.put("password", password)
-
 
     Fuel.post("https://api-frontend2.efitness.com.pl/api/clubs/324/token/member")
         .header("Accept" to "application/json")
@@ -28,16 +30,9 @@ fun login(loginName: String, password: String, token: String, callback: (String,
         .also { println(it) }
         .responseString { _, response, result ->
 
-
             val (data, error) = result
 
-
             val err = error.let { it?.localizedMessage } ?: "null"
-
-
-
-
-
 
                 if (err == "null") {
                 Log.e(TAG, "jest success")
@@ -48,35 +43,63 @@ fun login(loginName: String, password: String, token: String, callback: (String,
                 val expiresIn = obj.getLong("expiresIn")
                     val id= obj.getString("id")
                     Log.e(TAG, "taki jest id = $id")
-                callback(memberToken, id)
+                callback(memberToken, id, refreshToken)
 
             } else {
 
                 Log.e(TAG, "jest błąd ${err}; response code: ${response.responseMessage}")
-                callback("PJerror ${err}", "-1")
+                callback("PJerror ${err}", "-1", "-1")
             }
-
-
-
-
-
-
-
-
-
-
-
-            }
-
-
+        }
 }
 
 
-fun getMembership(memberToken: String, token: String, context: Context, callback: (String, String) -> Unit) {
+fun refreshAccessToken(refreshToken: String, memberToken: String, token: String, callback: (String, String, String) -> Unit) {
+
+    val TAG = "PJ efitlogin"
+
+    val json = JSONObject()
+    json.put("refreshToken", refreshToken)
+
+
+    Fuel.post("https://api-frontend2.efitness.com.pl/api/clubs/324/token/member/refresh")
+        .header("Accept" to "application/json")
+        .header("Content-type" to "application/json")
+        .header("api-access-token" to token)
+        .header("member-token" to "bearer $memberToken")
+        .body(json.toString())
+        .also { println(it) }
+        .responseString { _, response, result ->
+
+            val (data, error) = result
+
+            val err = error.let { it?.localizedMessage } ?: "null"
+
+            if (err == "null") {
+                Log.e(TAG, "jest success")
+
+                var obj = JSONObject(data)
+                val memberToken = obj.getString("accessToken")
+                val refreshToken = obj.getString("refreshToken")
+                val expiresIn = obj.getLong("expiresIn")
+                val id= obj.getString("id")
+                Log.e(TAG, "taki jest id = $id")
+                callback(memberToken, id, refreshToken)
+
+            } else {
+
+                Log.e(TAG, "jest błąd ${err}; response code: ${response.responseMessage}")
+                callback("PJerror ${err}", "-1", "-1")
+            }
+        }
+}
+
+
+
+fun getMembership(memberToken: String, token: String, context: Context, callback: (ArrayList<Membership>) -> Unit) {
 
     val TAG = "PJ getmembership"
 
-    var membershipName = ""
 
     Fuel.get("https://api-frontend2.efitness.com.pl/api/clubs/324/members/memberships")
         .header("Accept" to "application/json")
@@ -101,36 +124,28 @@ fun getMembership(memberToken: String, token: String, context: Context, callback
 
             val ileMemberships = membershipArray.length()
 
-//            Log.e(TAG, ileMemberships.toString())
+            if (ileMemberships == 0) {
+                callback(arrayListOf(Membership(context.getString(R.string.no_membership), Date(), false)))
+            }
+
+            var readMemberships: ArrayList<Membership> = ArrayList()
 
             for (z in 0..ileMemberships-1){
 
                 val memberShip = membershipArray[z] as JSONObject
-
-                membershipName = memberShip.getString("name")
-                val membershipIsValid = memberShip.getBoolean("isValid")
-                val membershipValidTo = memberShip.get("to")
-//                Log.e(TAG, "$membershipName i czy aktywne $membershipIsValid do $membershipValidTo")
-
-                if (membershipIsValid) {
-                    Log.e(TAG, "membership valid i zaraz callback")
-                    callback(membershipName, membershipValidTo.toString())
-                    break
-                }
-
-
-                if (z == ileMemberships-1) {
-                    callback(context.getString(R.string.no_membership), "")
-                    break
-                }
+                val membershipName = memberShip.getString("name")
+                val isValid = memberShip.getBoolean("isValid")
+                val expirationDate = memberShip.get("to") as String
+                val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                val expDate = format.parse(expirationDate)!!
+                val tempMembership = Membership(membershipName, expDate, isValid)
+                readMemberships.add(tempMembership)
 
             }
 
-
-
+            callback(readMemberships)
 
         }
-
 
 }
 
