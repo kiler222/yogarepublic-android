@@ -10,6 +10,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,11 +24,9 @@ import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_card.*
-
 import java.util.*
 
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -41,7 +40,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class CardFragment : Fragment() {
-    // TODO: Rename and change types of parameters
+
     external fun stringFromJNI():String
 
     private var param1: String? = null
@@ -96,7 +95,7 @@ class CardFragment : Fragment() {
             passwordField.visibility = View.GONE
             button.visibility = View.GONE
             userName.visibility = View.VISIBLE
-//            membershipNameField.visibility = View.GONE //VISIBLE
+            membershipsButton.visibility = View.VISIBLE
 
 
             if (SharedDate.cardNumber != "-1"){
@@ -136,7 +135,7 @@ class CardFragment : Fragment() {
             cardNumber.visibility = View.GONE
             barcodeImageView.visibility = View.GONE
             logoutButton.visibility = View.GONE
-//            membershipNameField.visibility = View.GONE
+            membershipsButton.visibility = View.GONE
             userName.text = ""
             membershipNameField.text = ""
             emailField.visibility = View.VISIBLE
@@ -162,7 +161,7 @@ class CardFragment : Fragment() {
             SharedDate.backgroudImage = bm
 
 //            Log.e(TAG, "bm width: ${bm?.width} i height: ${bm?.height}")
-            refreshAccessToken(refreshToken, memberToken, apiToken) { newMemberToken, id, newRefreshToken ->
+            refreshAccessToken(refreshToken, memberToken, apiToken) { newMemberToken, _, newRefreshToken ->
 
 
                 if (newMemberToken.startsWith("PJerror", false)) {
@@ -181,9 +180,57 @@ class CardFragment : Fragment() {
                         memberships.sortBy { it.expirationDate }
                         memberships.reverse()
 
+
+
                         var memberships2 = memberships
+//                        memberships2.removeAt(4)
+//                        memberships2.removeAt(3)
+//                        memberships2.removeAt(2)
+//                        memberships2.removeAt(1)
 //                        memberships2.add(memberships[1])
+//                        memberships2.add(memberships[5])
+//                        memberships2.add(memberships[3])
+//                        memberships2.add(memberships[2])
 //                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[1])
+                        memberships2.add(memberships[0])
+                        memberships2.add(memberships[0])
+//                        memberships2.add(memberships[3])
+//                        memberships2.add(memberships[2])
+//                        memberships2.add(memberships[1])
+//                        memberships2.add(memberships[4])
+//                        memberships2.add(memberships[3])
+//                        memberships2.add(memberships[0])
+//                        memberships2.add(memberships[4])
+//                        memberships2.add(memberships[3])
+//                        memberships2.add(memberships[5])
+//                        memberships2.add(memberships[0])
+//                        memberships2.add(memberships[3])
+//                        memberships2.add(memberships[5])
+//                        memberships2.add(memberships[3])
+//                        memberships2.add(memberships[0])
+//                        memberships2.add(memberships[0])
 
                         memberships2.add(0, Membership("header", Date(), false))
 
@@ -228,11 +275,12 @@ class CardFragment : Fragment() {
 //            builder.setMessage("Are you want to set the app background color to RED?")
 
             // Set a positive button and its click listener on alert dialog
-            builder.setPositiveButton(getString(R.string.yes)){dialog, which ->
+            builder.setPositiveButton(getString(R.string.yes)){_, _ ->
 
                 barcodeImageView.visibility = View.GONE
                 logoutButton.visibility = View.GONE
                 userName.visibility = View.GONE
+                cardNumber.visibility = View.GONE
                 userName.text = ""
                 membershipNameField.text = ""
                 emailField.setText("")
@@ -254,7 +302,12 @@ class CardFragment : Fragment() {
                 passwordField.visibility = View.VISIBLE
                 button.visibility = View.VISIBLE
                 logoutButton.visibility = View.GONE
-//                membershipNameField.visibility = View.GONE
+                membershipsButton.visibility = View.GONE
+
+              //TODO teraz w momencie startu apki jest logowanie do firebase; trzeba dodac wylogowywanie
+                // i potem dodoac logowanie do firebase po nacisniecu login button
+              //  FirebaseAuth.getInstance().signOut()
+
 
             }
 
@@ -300,6 +353,12 @@ class CardFragment : Fragment() {
 
             hideKeyboard()
 
+
+            emailField.text.clear()
+            emailField.text = Editable.Factory.getInstance().newEditable("pjobkiewicz@gmail.com")
+            passwordField.text.clear()
+            passwordField.text = Editable.Factory.getInstance().newEditable("xiubofwo")
+
             var loginName = emailField.text.toString().toLowerCase().trim().takeUnless { it.isNullOrEmpty() } //?: usernameError()
             var password = passwordField.text.toString().trim().takeUnless { it.isNullOrEmpty() } //?: return passwordError()
 
@@ -326,7 +385,7 @@ class CardFragment : Fragment() {
 
 
 
-//            Log.e(TAG, "klikniety button: $loginName, $password")
+            Log.e(TAG, "klikniety button: $loginName, $password")
 
 
 
@@ -339,7 +398,7 @@ class CardFragment : Fragment() {
                 if (memberToken.startsWith("PJerror", false)) {
 
 //                    Log.e(TAG, "error logowania: $memberToken")
-//                    Log.e(TAG, "activity: ${activity.toString()}, context: ${view.context}")
+                    Log.e(TAG, "PJ activity: ${activity.toString()}, context: ${view.context}")
 
 //
 
@@ -364,8 +423,8 @@ class CardFragment : Fragment() {
                     SharedDate.login = loginName
                     SharedDate.isLogged = true
                     SharedDate.userID = id
-                    Log.e(TAG, "taki refreshtokne po zalogowani: $refreshToken")
-                    Log.e(TAG, "taki memberToken po zalogowani: $memberToken")
+//                    Log.e(TAG, "taki refreshtokne po zalogowani: $refreshToken")
+//                    Log.e(TAG, "taki memberToken po zalogowani: $memberToken")
                     sharedPref.edit().putString("login", loginName).apply()
                     sharedPref.edit().putString("userID", id).apply()
                     sharedPref.edit().putBoolean("isLogged", true).apply()
@@ -385,7 +444,7 @@ class CardFragment : Fragment() {
                     getUserData(id){cNumber ->
 
                         SharedDate.cardNumber = cNumber
-                        sharedPref!!.edit().putString("cardNumber", cNumber).apply()
+                        sharedPref.edit().putString("cardNumber", cNumber).apply()
 
                         Log.e(TAG, "card number: $cNumber")
                         if (cNumber != "No such document" && cNumber != "failed" && cNumber != "-1") {
@@ -404,24 +463,29 @@ class CardFragment : Fragment() {
                                 val bitmap = bEnc.createBitmap(bitMatrix)
 
                                 barcodeImageView.setImageBitmap(bitmap)
-//                            barcodeImageView.visibility = View.VISIBLE
-
                                 cardNumber.text = cNumber
+
+                                activity?.runOnUiThread {
+                                    barcodeImageView.visibility = View.VISIBLE
+                                    cardNumber.visibility = View.VISIBLE
+                                }
 
 
                             } catch (Illegalargumentexception: IllegalArgumentException) {
                                 Log.e(TAG, Illegalargumentexception.localizedMessage)
                             }
+                        } else {
+
+                            activity?.runOnUiThread {
+                                barcodeImageView.visibility = View.GONE
+                                cardNumber.visibility = View.GONE
+                            }
+
+
                         }
 
                     }
 
-//                    getMembership(memberToken, apiToken, context!!){ membershipName, membershipValidTo ->
-//
-//                        Log.e(TAG, "membership: $membershipName, valid: $membershipValidTo")
-////                        membershipNameField.text = membershipName
-//                        SharedDate.membershipName = membershipName
-//                        sharedPref.edit().putString("membershipName", membershipName).apply()
 
                         getPersonalData(memberToken, apiToken) {
 
@@ -438,17 +502,19 @@ class CardFragment : Fragment() {
                                 userName.text = it
                                 userName.visibility = View.VISIBLE
                                 logoutButton.visibility = View.VISIBLE
+                                membershipsButton.visibility = View.VISIBLE
                                 progressBar.visibility = View.GONE
+                                cardNumber.text = SharedDate.cardNumber
 
-                                if (SharedDate.cardNumber != "-1"){
-                                    barcodeImageView.visibility = View.VISIBLE
-                                    cardNumber.visibility = View.VISIBLE
-                                } else {
-                                    barcodeImageView.visibility = View.GONE
-                                    cardNumber.visibility = View.GONE
-                                }
+//                                if (SharedDate.cardNumber != "-1"){
+//                                    barcodeImageView.visibility = View.VISIBLE
+//                                    cardNumber.visibility = View.VISIBLE
+//                                } else {
+//                                    barcodeImageView.visibility = View.GONE
+//                                    cardNumber.visibility = View.GONE
+//                                }
 
-//                                membershipNameField.visibility = View.GONE //VISIBLE
+
 
                             }
 
@@ -478,7 +544,7 @@ class CardFragment : Fragment() {
 
 
 
-    // TODO: Rename method, update argument and hook method into UI event
+
     fun onButtonPressed(uri: Uri) {
         listener?.onFragmentInteraction(uri)
     }
@@ -509,7 +575,7 @@ class CardFragment : Fragment() {
      * for more information.
      */
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         fun onFragmentInteraction(uri: Uri)
     }
 
@@ -522,7 +588,7 @@ class CardFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment CardFragment.
          */
-        // TODO: Rename and change types and number of parameters
+
         @JvmStatic
         fun newInstance() =
             CardFragment().apply {

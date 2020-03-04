@@ -122,10 +122,12 @@
 
     <Button
             android:id="@+id/button"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/variable_bold"
 
+            android:background="@drawable/button_style"
+            android:fontFamily="@font/variable_bold"
             android:text="@string/login"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/forgetPasswordButton"
@@ -203,11 +205,14 @@
 
     <Button
             android:id="@+id/membershipsButton"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/button_style"
             android:fontFamily="@font/variable_bold"
             android:text="@string/memberships_button"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="@+id/imageView4"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/imageView4"

@@ -29,6 +29,7 @@
             android:layout_marginStart="2dp"
             android:fontFamily="@font/variable_bold"
             android:text="30-07-2020"
+            android:textAlignment="center"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/membershipName"

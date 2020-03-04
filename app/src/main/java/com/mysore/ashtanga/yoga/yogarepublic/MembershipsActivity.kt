@@ -71,7 +71,10 @@ class MembershipsActivity : AppCompatActivity() {
 
 
             adapter = MembershipsAdapter(SharedDate.membershipsForRecyclerView, this)
+//            adapter.setHasStableIds(true)
+            recyclerView.setItemViewCacheSize(20)
             recyclerView.adapter = adapter
+
 
 
 

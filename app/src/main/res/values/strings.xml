@@ -26,6 +26,9 @@
     <string name="forget_password">Forgot password?</string>
     <string name="logout">Logout</string>
     <string name="memberships_button">My memberships</string>
+    <string name="permanent">Permanent</string>
+    <string name="valid_till">Valid till</string>
+    <string name="memberships">Memberships</string>
 
 
 </resources>

@@ -27,7 +27,7 @@ fun login(loginName: String, password: String, token: String, callback: (String,
         .header("api-access-token" to token)
         .body(json.toString())
 //            .header("member-token" to "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMTYxNTI2Iiwic3ViIjoicGpvYmtpZXdpY3pAZ21haWwuY29tIiwianRpIjoiNTlhMWEyNGYtZTA0OS00ZmUwLWJkZWEtNDdhMjZkNjVmNjZkIiwiaWF0IjoxNTgwMzMwNjkxLCJpZCI6IjExNjE1MjYiLCJuYmYiOjE1ODAzMzA2OTAsImV4cCI6MTU4MDMzNzg5MCwiaXNzIjoiYXBpRnJvbnRlbmQiLCJhdWQiOiJodHRwczovL2FwaS1mcm9udGVuZDIuZWZpdG5lc3MuY29tLnBsIn0.mwEwqQBlIaYp57313VsvsBWYrmDVuBwhuiN1ZjoVfdmcsgXBk8IgtNm_pu2KL1j7DOXeyIZYIbvTHwoXUqb5Xcwk5blVg3LgP6hPtE2CiCTqeQu3AxkISUCDYXvdkhQGEoG_hVg-gJ3yTGdJFZdQ0i2hE_sGI2W97-PHNl8oqWgOn13QYN7OWGQ0rlICr0MJIlpoxjD0Cw97O2h1kV32f1KPSP-uhlEYNTZQEQ-79c-GAxBWeTYwSqYWx4PqFxbH5sodCpWghvAWeyqrxvFdDADPdNNPQpkYXHI2AOeFSFATBVQ3VZ0z__3bBZtWx_W7SC22mSZOS-jwzA6kbX4G8w")
-        .also { println(it) }
+//        .also { println(it) }
         .responseString { _, response, result ->
 
             val (data, error) = result
@@ -56,7 +56,7 @@ fun login(loginName: String, password: String, token: String, callback: (String,
 
 fun refreshAccessToken(refreshToken: String, memberToken: String, token: String, callback: (String, String, String) -> Unit) {
 
-    val TAG = "PJ efitlogin"
+    val TAG = "PJ refaccteokne"
 
     val json = JSONObject()
     json.put("refreshToken", refreshToken)
@@ -68,7 +68,7 @@ fun refreshAccessToken(refreshToken: String, memberToken: String, token: String,
         .header("api-access-token" to token)
         .header("member-token" to "bearer $memberToken")
         .body(json.toString())
-        .also { println(it) }
+//        .also { println(it) }
         .responseString { _, response, result ->
 
             val (data, error) = result
@@ -108,13 +108,13 @@ fun getMembership(memberToken: String, token: String, context: Context, callback
         .header("member-token" to "bearer $memberToken")
 //        .body(json.toString())
 //            .header("member-token" to "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMTYxNTI2Iiwic3ViIjoicGpvYmtpZXdpY3pAZ21haWwuY29tIiwianRpIjoiNTlhMWEyNGYtZTA0OS00ZmUwLWJkZWEtNDdhMjZkNjVmNjZkIiwiaWF0IjoxNTgwMzMwNjkxLCJpZCI6IjExNjE1MjYiLCJuYmYiOjE1ODAzMzA2OTAsImV4cCI6MTU4MDMzNzg5MCwiaXNzIjoiYXBpRnJvbnRlbmQiLCJhdWQiOiJodHRwczovL2FwaS1mcm9udGVuZDIuZWZpdG5lc3MuY29tLnBsIn0.mwEwqQBlIaYp57313VsvsBWYrmDVuBwhuiN1ZjoVfdmcsgXBk8IgtNm_pu2KL1j7DOXeyIZYIbvTHwoXUqb5Xcwk5blVg3LgP6hPtE2CiCTqeQu3AxkISUCDYXvdkhQGEoG_hVg-gJ3yTGdJFZdQ0i2hE_sGI2W97-PHNl8oqWgOn13QYN7OWGQ0rlICr0MJIlpoxjD0Cw97O2h1kV32f1KPSP-uhlEYNTZQEQ-79c-GAxBWeTYwSqYWx4PqFxbH5sodCpWghvAWeyqrxvFdDADPdNNPQpkYXHI2AOeFSFATBVQ3VZ0z__3bBZtWx_W7SC22mSZOS-jwzA6kbX4G8w")
-        .also { println(it) }
+//        .also { println(it) }
         .responseString { _, response, result ->
 
 
             val (data, error) = result
 
-//            Log.e(TAG, "pobrany member - ${error}")
+//            Log.e(TAG, "pobrany member error - ${error?.localizedMessage}")
 //            Log.e(TAG, "response - ${JSONArray(data)}")
 
             var obj = JSONObject(data)
@@ -135,7 +135,24 @@ fun getMembership(memberToken: String, token: String, context: Context, callback
                 val memberShip = membershipArray[z] as JSONObject
                 val membershipName = memberShip.getString("name")
                 val isValid = memberShip.getBoolean("isValid")
-                val expirationDate = memberShip.get("to") as String
+
+//                var expirationDate = "01-01-2051"
+
+                var expirationDate = ""
+
+
+                if (memberShip.isNull("to"))
+                    expirationDate = "2051-01-01T00:00:00"
+                else
+                    expirationDate = memberShip.optString("to");
+
+
+//                Log.e(TAG, "jaka data: ${expirationDate}")
+//                Log.e(TAG, "pelny membership: ${memberShip.toString()}")
+
+
+
+
                 val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                 val expDate = format.parse(expirationDate)!!
                 val tempMembership = Membership(membershipName, expDate, isValid)
@@ -161,7 +178,7 @@ Log.e(TAG, "zaraz odptuje get personal data")
         .header("Accept" to "application/json")
         .header("api-access-token" to token)
         .header("member-token" to "bearer $memberToken")
-        .also { println(it) }
+//        .also { println(it) }
         .responseString { _, response, result ->
 
 
@@ -183,4 +200,11 @@ Log.e(TAG, "zaraz odptuje get personal data")
         }
 
 
+}
+
+fun optString(
+    json: JSONObject,
+    key: String?
+): String? { // http://code.google.com/p/android/issues/detail?id=13830
+    return if (json.isNull(key)) null else json.optString(key, null)
 }

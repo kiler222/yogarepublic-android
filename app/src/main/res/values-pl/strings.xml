@@ -25,4 +25,7 @@
     <string name="forget_password">Nie pamiętasz hasła?</string>
     <string name="logout">Wyloguj</string>
     <string name="memberships_button">Moje karnety</string>
+    <string name="permanent">Bezterminowo</string>
+    <string name="valid_till">Data ważności</string>
+    <string name="memberships">Karnet</string>
 </resources>

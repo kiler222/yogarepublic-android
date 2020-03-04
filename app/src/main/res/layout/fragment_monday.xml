@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         tools:context=".MondayFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <com.github.eunsiljo.timetablelib.view.TimeTableView
             android:id="@+id/timeTable"
             android:layout_width="match_parent"

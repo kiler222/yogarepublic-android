@@ -59,15 +59,10 @@ class MainActivity : AppCompatActivity() {
     val TAG = "PJ MainActivity"
 
 
-
-//    static {
-//        System.loadLibrary("native-lib");
-//    }
-//
-//    public native String stringFromJNI();
-
-//    external fun stringFromJNI():String
-
+    override fun onResume() {
+        super.onResume()
+        Log.e(TAG, "onResume się dzieje")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,37 +75,20 @@ class MainActivity : AppCompatActivity() {
         SharedDate.mLongerHeaders.add(getString(R.string.big_room))
 
 
-//        val xx = stringFromJNI()
-//
-//        Log.e(TAG, "czy działa JNI??? = $xx")
-
-//        var tabYR = yr.split("NL")
-//
-//        tabYR.forEach{
-//            val userData= it.split(",")
-//            val email = userData[0]
-//            val cardNumber = userData[1]
-//            Log.e(TAG, "rekordy: $email i karta: $cardNumber")
-//        }
-
 
 
 
         bottom_app_bar.setOnNavigationItemSelectedListener { item: MenuItem ->
             return@setOnNavigationItemSelectedListener when (item.itemId) {
                 R.id.app_bar_card -> {
-//                    Toast.makeText(this, "Card item click", Toast.LENGTH_SHORT).show()
-//
+
                     val fragment = CardFragment()
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment, fragment, fragment.javaClass.getSimpleName())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment, fragment, fragment.javaClass.getSimpleName())
                         .commit()
                     true
                 }
                 R.id.app_bar_timetable -> {
-
-//                    Toast.makeText(this, "Card item click", Toast.LENGTH_SHORT).show()
-
-//                    readTimetable(this@MainActivity)
 
                     Log.e(TAG, "sprawdzenie zaraz mondayBig")
 
@@ -124,6 +102,8 @@ class MainActivity : AppCompatActivity() {
                         false
 
                     } else {
+
+                        Log.e(TAG,  "probujemy ten fagment odpalic???")
                         val fragment = TimetableFragment()
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.fragment, fragment, fragment.javaClass.getSimpleName())
@@ -134,7 +114,10 @@ class MainActivity : AppCompatActivity() {
 
                 }
 
-                else -> false
+                else -> {
+                    Log.e(TAG, "czy to sie pojawia????")
+                    false
+                }
             }
         }
 
@@ -170,6 +153,8 @@ class MainActivity : AppCompatActivity() {
 
 
         auth = FirebaseAuth.getInstance()
+
+
 
         signInAnonymously()
 
@@ -213,18 +198,18 @@ class MainActivity : AppCompatActivity() {
                     if (sharedPref!!.getBoolean("isLogged", false)) {
 
                         val login = sharedPref.getString("login", "")!!
-                        checkIfExist(login){exists ->
+                        val id = sharedPref.getString("userID", "")!!
+
+                        checkIfExist(id){exists ->
 
                             if (exists) {
-                                setUserLastLogin(login){}
+                                setUserLastLogin(id){}
                             }
                         }
 
 
                     }
 
-
-//                    addCardNumbers()
 
 
                 } else {
@@ -235,11 +220,8 @@ class MainActivity : AppCompatActivity() {
 
                 }
 
-                // [START_EXCLUDE]
-//                progressBar.isVisible = false
-                // [END_EXCLUDE]
             }
-        // [END signin_anonymously]
+
     }
 
     private fun signOut() {

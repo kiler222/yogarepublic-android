@@ -28,6 +28,7 @@ class MembershipsAdapter(private val memberships: ArrayList<Membership>, val mCo
     override fun getItemCount() = memberships.size
 
 
+
     override fun onBindViewHolder(holder: MembershipsAdapter.MembershipHolder, position: Int) {
         val itemMembership = memberships[position]
         holder.bindMembership(itemMembership, mContext)
@@ -59,22 +60,31 @@ class MembershipsAdapter(private val memberships: ArrayList<Membership>, val mCo
 
 
             if (membership.membershipName == "header") {
-                Log.e("PJbindMemebrship", "header???? ${membership.membershipName}")
+//                Log.e("PJbindMemebrship", "header???? ${membership.membershipName}")
 
-                view.expirationDate.text = "Data ważności"
+                view.expirationDate.text = mContext.getString(R.string.valid_till)
                 view.expirationDate.setTextColor(ContextCompat.getColor(mContext, R.color.white))
-                view.membershipName.text = "Karnet"
+                view.membershipName.text = mContext.getString(R.string.memberships)
                 view.membershipName.setTextColor(ContextCompat.getColor(mContext, R.color.white))
                 view.isValidDot.setColorFilter(ContextCompat.getColor(mContext, R.color.colorPrimary))
                 view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
 
 
             } else {
-                Log.e("PJbindMemebrship", "nie jest header???? ${membership.membershipName}")
-                val expDate =
+//                Log.e("PJbindMemebrship", "nie jest header???? ${membership.membershipName}")
+
+                var expDate =
                     SimpleDateFormat("dd-MM-yyyy", Locale.US).format(membership.expirationDate)
-                Log.e("PJ bindMembershpi", "wstawianie expData $expDate do pola  ")
-                view.expirationDate.text = expDate
+
+                if (expDate == "01-01-2051") {
+                    view.expirationDate.text = mContext.getString(R.string.permanent)
+
+                } else {
+//                    Log.e("PJ bindMembershpi", "wstawianie expData $expDate do pola  ")
+                    view.expirationDate.text = expDate
+                }
+
+
                 view.membershipName.text = membership.membershipName
 
 

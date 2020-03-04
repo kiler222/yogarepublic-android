@@ -36,6 +36,8 @@
     <color name="color_table_6_light">#d1f3fb</color>
     <color name="color_table_7_light">#e7f7d6</color>
 
+    <color name="color_button">#aaCB4380</color>
+
     <array name="colors_table">
         <item>@color/color_table_1</item>
         <item>@color/color_table_2</item>
