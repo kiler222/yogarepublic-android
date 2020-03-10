@@ -1,11 +1,7 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
 
-import android.content.Context
-
 import android.util.Log
-
-
 import com.github.kittinunf.fuel.Fuel
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -35,14 +31,14 @@ fun login(loginName: String, password: String, token: String, callback: (String,
             val err = error.let { it?.localizedMessage } ?: "null"
 
                 if (err == "null") {
-                Log.e(TAG, "jest success")
+//                Log.e(TAG, "jest success")
 
                 var obj = JSONObject(data)
                 val memberToken = obj.getString("accessToken")
                 val refreshToken = obj.getString("refreshToken")
                 val expiresIn = obj.getLong("expiresIn")
                     val id= obj.getString("id")
-                    Log.e(TAG, "taki jest id = $id")
+//                    Log.e(TAG, "taki jest id = $id")
                 callback(memberToken, id, refreshToken)
 
             } else {
@@ -76,14 +72,14 @@ fun refreshAccessToken(refreshToken: String, memberToken: String, token: String,
             val err = error.let { it?.localizedMessage } ?: "null"
 
             if (err == "null") {
-                Log.e(TAG, "jest success")
+//                Log.e(TAG, "jest success")
 
                 var obj = JSONObject(data)
                 val memberToken = obj.getString("accessToken")
                 val refreshToken = obj.getString("refreshToken")
                 val expiresIn = obj.getLong("expiresIn")
                 val id= obj.getString("id")
-                Log.e(TAG, "taki jest id = $id")
+//                Log.e(TAG, "taki jest id = $id")
                 callback(memberToken, id, refreshToken)
 
             } else {
@@ -96,7 +92,7 @@ fun refreshAccessToken(refreshToken: String, memberToken: String, token: String,
 
 
 
-fun getMembership(memberToken: String, token: String, context: Context, callback: (ArrayList<Membership>) -> Unit) {
+fun getMembership(memberToken: String, token: String, infoText: String, callback: (ArrayList<Membership>) -> Unit) {
 
     val TAG = "PJ getmembership"
 
@@ -125,7 +121,7 @@ fun getMembership(memberToken: String, token: String, context: Context, callback
             val ileMemberships = membershipArray.length()
 
             if (ileMemberships == 0) {
-                callback(arrayListOf(Membership(context.getString(R.string.no_membership), Date(), false)))
+                callback(arrayListOf(Membership(infoText, Date(), false)))
             }
 
             var readMemberships: ArrayList<Membership> = ArrayList()
@@ -172,7 +168,7 @@ fun getPersonalData(memberToken: String, token: String, callback: (String) -> Un
 
     val TAG = "PJ personalDat"
 
-Log.e(TAG, "zaraz odptuje get personal data")
+//Log.e(TAG, "zaraz odptuje get personal data")
 
     Fuel.get("https://api-frontend2.efitness.com.pl/api/clubs/324/members")
         .header("Accept" to "application/json")

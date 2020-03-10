@@ -29,6 +29,8 @@
     <string name="permanent">Permanent</string>
     <string name="valid_till">Valid till</string>
     <string name="memberships">Memberships</string>
+    <string name="memberships_error">Error getting memberships. Try again later.</string>
+    <string name="you_dont_have_memberships">You don\'t have any memberships</string>
 
 
 </resources>

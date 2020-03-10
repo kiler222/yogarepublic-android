@@ -41,23 +41,17 @@ class SplashActivity : AppCompatActivity() {
 
 
 
-        Log.e(TAG, "now: $mNowHuman, plus7: $mNowplus7Human")
 
         val pattern = "yyyy-MM-dd"
         val simpleDateFormat = SimpleDateFormat(pattern)
         val startDate: String = simpleDateFormat.format(Date())
         val apiToken = stringFromJNI()
 
-//        Log.e(TAG, "data: $startDate - zaraz odpytamy o grafik")
-
-//        https://api-frontend2.efitness.com.pl/api/clubs/324/schedules/classes?dateFrom=2020-02-14&dateTo=2020-02-14
 
 
         Fuel.get("https://api-frontend2.efitness.com.pl/api/clubs/324/schedules/classes?dateFrom=${mNowHuman}&dateTo=${mNowplus7Human}")
             .header("Accept" to "application/json")
             .header("api-access-token" to apiToken)
-//            .header("member-token" to "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMTYxNTI2Iiwic3ViIjoicGpvYmtpZXdpY3pAZ21haWwuY29tIiwianRpIjoiNTlhMWEyNGYtZTA0OS00ZmUwLWJkZWEtNDdhMjZkNjVmNjZkIiwiaWF0IjoxNTgwMzMwNjkxLCJpZCI6IjExNjE1MjYiLCJuYmYiOjE1ODAzMzA2OTAsImV4cCI6MTU4MDMzNzg5MCwiaXNzIjoiYXBpRnJvbnRlbmQiLCJhdWQiOiJodHRwczovL2FwaS1mcm9udGVuZDIuZWZpdG5lc3MuY29tLnBsIn0.mwEwqQBlIaYp57313VsvsBWYrmDVuBwhuiN1ZjoVfdmcsgXBk8IgtNm_pu2KL1j7DOXeyIZYIbvTHwoXUqb5Xcwk5blVg3LgP6hPtE2CiCTqeQu3AxkISUCDYXvdkhQGEoG_hVg-gJ3yTGdJFZdQ0i2hE_sGI2W97-PHNl8oqWgOn13QYN7OWGQ0rlICr0MJIlpoxjD0Cw97O2h1kV32f1KPSP-uhlEYNTZQEQ-79c-GAxBWeTYwSqYWx4PqFxbH5sodCpWghvAWeyqrxvFdDADPdNNPQpkYXHI2AOeFSFATBVQ3VZ0z__3bBZtWx_W7SC22mSZOS-jwzA6kbX4G8w")
-            .also { println(it) }
             .responseString { _, reponse, result ->
 
 
@@ -317,10 +311,35 @@ class SplashActivity : AppCompatActivity() {
             }
 
 
+        val password = sharedPref.getString("password", "") ?: ""
+        val login = sharedPref.getString("login", "") ?: ""
 
 
+        if (password != "" && login != "") {
 
+            login(login, password, apiToken) { memberToken, _, refreshToken ->
 
+                if (!memberToken.startsWith("PJerror", false)) {
+
+                    getMembership(
+                        memberToken,
+                        apiToken,
+                        applicationContext.getString(R.string.no_membership)
+                    ) { memberships ->
+
+                        memberships.sortBy { it.expirationDate }
+                        memberships.reverse()
+                        val memberships2 = memberships
+                        memberships2.add(0, Membership("header", Date(), false))
+                        SharedDate.membershipsForRecyclerView = memberships2
+                    }
+
+                    sharedPref.edit().putString("refreshToken", refreshToken).apply()
+                    sharedPref.edit().putString("memberToken", memberToken).apply()
+                }
+
+            }
+        }
 
 
         val intent = Intent(this, MainActivity::class.java)

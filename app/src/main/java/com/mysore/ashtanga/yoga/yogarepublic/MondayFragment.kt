@@ -1,9 +1,7 @@
 package com.mysore.ashtanga.yoga.yogarepublic
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -73,9 +71,9 @@ class MondayFragment : Fragment() {
         mNow = df.parse(dateBegining).time
 
 
-        val isLogged = activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean("isLogged", false)
+//        val isLogged = activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean("isLogged", false)
 
-        Log.e(TAG, "islogged = $isLogged")
+//        Log.e(TAG, "islogged = $isLogged")
 
 
 

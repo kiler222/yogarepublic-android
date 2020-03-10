@@ -28,4 +28,6 @@
     <string name="permanent">Bezterminowo</string>
     <string name="valid_till">Data ważności</string>
     <string name="memberships">Karnet</string>
+    <string name="memberships_error">Nie można pobrać danych o karnetach. Spróbuj za chwilę.</string>
+    <string name="you_dont_have_memberships">Nie masz karnetów</string>
 </resources>

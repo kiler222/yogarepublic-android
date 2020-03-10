@@ -13,7 +13,7 @@ fun getUserData(user: String, callback: (String) -> Unit) {
             if (document.data != null) {
 
 
-                Log.e(TAG, "DocumentSnapshot data: ${document.data}")
+//                Log.e(TAG, "DocumentSnapshot data: ${document.data}")
                 val cardNumber = document.data!!.get("a") as String
 
                 if (cardNumber.length % 2 == 0) {
@@ -67,7 +67,7 @@ fun setUserLastLogin(user: String, callback: (String) -> Unit) {
     val docRef = SharedDate.db.collection("users").document(user)
 
     docRef.update("ll", Timestamp.now())
-    .addOnSuccessListener { Log.e(TAG, "last login updated!") }
+//    .addOnSuccessListener { Log.e(TAG, "last login updated!") }
         .addOnFailureListener { e -> Log.e(TAG, "Error updating lastlogin", e) }
 
 

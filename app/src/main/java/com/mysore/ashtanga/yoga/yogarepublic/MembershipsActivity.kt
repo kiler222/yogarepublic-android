@@ -81,4 +81,9 @@ class MembershipsActivity : AppCompatActivity() {
     }
 
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+//        Log.e(TAG, "onBackpressed klikniety" )
+    }
+
 }
