@@ -62,6 +62,8 @@ class SplashActivity : AppCompatActivity() {
 
                 val wynikArray = obj.getJSONArray("results")
 
+                Log.e(TAG, wynikArray.toString())
+
                 val ileZajec = wynikArray.length()
 
 
@@ -85,6 +87,7 @@ class SplashActivity : AppCompatActivity() {
 
                     val zajeciaTemp = wynikArray[z] as JSONObject
 
+//                    Log.e(TAG, "no. ${z}; ${zajeciaTemp}")
 
                     var arrayTemp = JSONArray()
 
